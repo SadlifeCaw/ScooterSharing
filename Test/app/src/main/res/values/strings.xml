@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Scooter Sharing</string>
+    <string name="add_button">Add Ride</string>
+    <string name="successfully_placed_bike">Successfully placed bike at designated position</string>
+    <string name="could_not_find_bike">Could not find the name of the bike. Please try again</string>
+    <string name="too_short">Please insert a longer name and address</string>
+    <string name="last_added_text">Last Added: </string>
+    <string name="name_text">Name:</string>
+    <string name="where_text">Where:</string>
+    <string name="start_button">Start Ride</string>
+    <string name="info_text">Last bike: </string>
+    <string name="update_button">Update Ride</string>
+    <string name="edit_button">Edit Ride</string>
+    <string name="back_button">Back</string>
+    <string name="list_rides_button">List Rides</string>
+
+    <string name="alert_title">alert_title</string>
+    <string name="alert_supporting_text">alert_supporting_text</string>
+    <string name="cancel">cancel</string>
+    <string name="decline">decline</string>
+    <string name="accept">accept</string>
+
+    <string name="firebase_authentication">Firebase\nAuthentication</string>
+    <string name="firebase_user_description">You are logged in as %s</string>
+    <string name="sign_out">Sign out</string>
+    <string name="content_description_sign_out">Sign out</string>
+
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_where">Enter Where</string>
+    <string name="dialog_add_title">Add Title</string>
+    <string name="dialog_add_message">Add Message</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="dialog_update_title">Update Title</string>
+    <string name="dialog_update_message">Update Message</string>
+
+    <string name="content_description_add">Add Description</string>
+</resources>
