@@ -54,7 +54,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireContext()
         ridesDB = RidesDB.get(context)
-        val data = ridesDB.getScooters()
         super.onViewCreated(view, savedInstanceState)
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
@@ -63,7 +62,14 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(context)
 
+
+
         with (binding) {
+            adapter = RidesListXX(options)
+            listOfRides.layoutManager = LinearLayoutManager(context)
+            listOfRides.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            listOfRides.adapter = adapter
+
             startButton.setOnClickListener {
                 val intent = Intent(context, StartRideActivity::class.java)
                 startActivity(intent)
@@ -72,22 +78,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                 val intent = Intent(context, EditRideActivity::class.java)
                 startActivity(intent)
             }
-            //listRidesButton.setOnClickListener {
-                adapter = RidesListXX(options)
-                listOfRides.layoutManager = LinearLayoutManager(context)
-                //listOfRides.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-                listOfRides.adapter = adapter
-            //}
-            topAppBar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.more -> {
-                        auth.signOut()
-                        startLoginActivity()
-                        true
-                    }
-                    else -> false
-                }
-            }
             floatingActionButton.setOnClickListener {
                 customAlertDialogView = LayoutInflater.from(context)
                     .inflate(R.layout.dialog_add_data, binding.root, false)
@@ -95,20 +85,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                 launchInsertAlertDialog()
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (auth.currentUser == null)
-            startLoginActivity()
-        val user = auth.currentUser
-        binding.description.text = getString(R.string.firebase_user_description, user?.email ?: user?.phoneNumber)
-    }
-
-    private fun startLoginActivity() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        startActivity(intent)
-        activity?.finish()
     }
 
     override fun onItemClickListener(scooter: Scooter, position: Int) {

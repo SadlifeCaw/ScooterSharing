@@ -7,20 +7,6 @@
     android:gravity="center"
     tools:context="dk.itu.moapd.scootersharing.fragments.ScooterSharingFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
-            app:menu="@menu/top_app_bar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <!-- Recent added ride -->
     <View
         android:layout_width="match_parent"
@@ -68,12 +54,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_of_rides"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:listitem="@layout/list_rides"/>
-    <EditText
-        android:id="@+id/test_edit_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
 </LinearLayout>
 
