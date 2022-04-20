@@ -69,21 +69,12 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
             listOfRides.layoutManager = LinearLayoutManager(context)
             listOfRides.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             listOfRides.adapter = adapter
-
-            startButton.setOnClickListener {
-                val intent = Intent(context, StartRideActivity::class.java)
-                startActivity(intent)
-            }
-            editButton.setOnClickListener {
-                val intent = Intent(context, EditRideActivity::class.java)
-                startActivity(intent)
-            }
             floatingActionButton.setOnClickListener {
                 customAlertDialogView = LayoutInflater.from(context)
                     .inflate(R.layout.dialog_add_data, binding.root, false)
-
                 launchInsertAlertDialog()
             }
+            description.setText(auth.currentUser?.email)
         }
     }
 
