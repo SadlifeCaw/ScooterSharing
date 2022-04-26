@@ -58,7 +58,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
 
-        val query = database.child("scooters").child(auth.currentUser?.uid ?: "None") //.orderByChild("timestamp")
+        val query = database.child("scooters") //.orderByChild("timestamp")
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(context)
 
@@ -99,14 +99,15 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                     val timestamp = System.currentTimeMillis()
                     val scooter = Scooter(name, where, timestamp)
 
-                    val uid = database.child("scooters")
+                   /* val uid = database.child("scooters")
                         .child(auth.currentUser?.uid!!)
                         .push()
-                        .key
+                        .key*/
 
                     database.child("scooters")
-                        .child(auth.currentUser?.uid!!)
-                        .child(uid!!)
+                        //.child(auth.currentUser?.uid!!)
+                        //.child(uid!!)
+                        .child(scooter.name!!)
                         .setValue(scooter)
                 }
                 dialog.dismiss()
