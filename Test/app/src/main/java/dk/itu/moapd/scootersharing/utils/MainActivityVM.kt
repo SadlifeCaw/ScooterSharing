@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.utils
 
+import android.location.Location
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -73,6 +74,26 @@ class MainActivityVM : ViewModel() {
      */
     fun setButtonId(buttonId: Int) {
         this.buttonId = buttonId
+    }
+
+    private val location = MutableLiveData<Location>()
+
+    /**
+     * A LiveData which publicly exposes any update in the location-aware service.
+     *
+     * @return The current user location.
+     */
+    val locationState: LiveData<Location>
+        get() = location
+
+    /**
+     * This method will be executed when the location-aware service updates the current user
+     * location. It sets the updated location into the LiveData instance.
+     *
+     * @param location The current user's location obtained from the location-aware service.
+     */
+    fun onLocationChanged(location: Location) {
+        this.location.value = location
     }
 
 }
