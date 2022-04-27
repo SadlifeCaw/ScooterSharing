@@ -12,7 +12,9 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
 import dk.itu.moapd.scootersharing.fragments.MapsFragment
@@ -31,6 +33,7 @@ class ScooterSharingActivity : AppCompatActivity () {
 
     companion object {
         private const val ALL_PERMISSIONS_RESULT = 1011
+        public lateinit var database : DatabaseReference
     }
 
     private val viewModel: MainActivityVM by lazy {
@@ -42,6 +45,8 @@ class ScooterSharingActivity : AppCompatActivity () {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         binding = ActivityScooterSharingBinding.inflate(layoutInflater)
+        database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        database.keepSynced(true)
 
         val lastFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
