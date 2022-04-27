@@ -26,6 +26,8 @@ import dk.itu.moapd.scootersharing.models.Scooter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 
 class ScooterSharingFragment : Fragment(), ItemClickListener{
     private var _binding: FragmentScooterSharingBinding? = null
@@ -34,6 +36,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     private lateinit var database: DatabaseReference
     private lateinit var customAlertDialogView: View
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
+    private lateinit var storage: FirebaseStorage
 
     companion object {
         lateinit var ridesDB : RidesDB
@@ -56,6 +59,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         ridesDB = RidesDB.get(context)
         super.onViewCreated(view, savedInstanceState)
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        storage = Firebase.storage("gs://scooter-sharing-2ac71.appspot.com")
         database.keepSynced(true)
 
         val query = database.child("scooters") //.orderByChild("timestamp")
