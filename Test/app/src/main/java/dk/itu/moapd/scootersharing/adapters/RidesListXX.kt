@@ -15,7 +15,7 @@ class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
     FirebaseRecyclerAdapter<Scooter, RidesListXX.ViewHolder>(options) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name: TextView = view.findViewById(R.id.name1)
+        val id: TextView = view.findViewById(R.id.name1)
         val where: TextView = view.findViewById(R.id.where1)
         val timestamp: TextView = view.findViewById(R.id.timestamp1)
     }
@@ -28,7 +28,7 @@ class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, scooter: Scooter) {
         holder.apply {
-            name.text = scooter.name
+            id.text = scooter.id
             where.text = scooter.where
             timestamp.text = scooter.timestamp.toString()
         }

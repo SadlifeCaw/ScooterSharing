@@ -1,7 +1,9 @@
 package dk.itu.moapd.scootersharing.fragments
 
-import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,17 +17,14 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
-import dk.itu.moapd.scootersharing.RidesDB
-import dk.itu.moapd.scootersharing.activities.EditRideActivity
-import dk.itu.moapd.scootersharing.activities.LoginActivity
-import dk.itu.moapd.scootersharing.activities.StartRideActivity
 import dk.itu.moapd.scootersharing.adapters.RidesListXX
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterSharingBinding
 import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
+import java.io.IOException
+import java.util.*
+import kotlin.random.Random
 
 class ScooterSharingFragment : Fragment(), ItemClickListener{
     private var _binding: FragmentScooterSharingBinding? = null
@@ -36,7 +35,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
 
     companion object {
-        lateinit var ridesDB : RidesDB
         private lateinit var adapter : RidesListXX
     }
 
@@ -53,7 +51,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireContext()
-        ridesDB = RidesDB.get(context)
         super.onViewCreated(view, savedInstanceState)
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
@@ -86,18 +83,24 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     }
 
     private fun launchInsertAlertDialog() {
-        val nameField = customAlertDialogView.findViewById<TextInputLayout>(R.id.name_text_field)
-        val whereField = customAlertDialogView.findViewById<TextInputLayout>(R.id.where_text_field)
+        val idField = customAlertDialogView.findViewById<TextInputLayout>(R.id.id_text_field)
+        val latField = customAlertDialogView.findViewById<TextInputLayout>(R.id.lat_text_field)
+        val lonField = customAlertDialogView.findViewById<TextInputLayout>(R.id.lon_text_field)
 
         materialAlertDialogBuilder.setView(customAlertDialogView)
             .setTitle(getString(R.string.dialog_add_title))
             .setMessage(getString(R.string.dialog_add_message))
             .setPositiveButton(getString(R.string.add_button)) { dialog, _ ->
-                val name = nameField.editText?.text.toString()
-                val where = whereField.editText?.text.toString()
-                if (name.isNotEmpty()) {
+                val id = idField.editText?.text.toString()
+                val lat = latField.editText?.text.toString().toDouble()
+                val lon = lonField.editText?.text.toString().toDouble()
+                val where = getAddress(lat, lon)
+
+                if (id.isNotEmpty()) {
                     val timestamp = System.currentTimeMillis()
-                    val scooter = Scooter(name, where, timestamp)
+                    val battery = Random.nextInt(1, 100)
+                    val scooter = Scooter(id, lat, lon, battery, timestamp)
+                    scooter.where = where
 
                    /* val uid = database.child("scooters")
                         .child(auth.currentUser?.uid!!)
@@ -107,7 +110,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                     database.child("scooters")
                         //.child(auth.currentUser?.uid!!)
                         //.child(uid!!)
-                        .child(scooter.name!!)
+                        .child(scooter.id!!)
                         .setValue(scooter)
                 }
                 dialog.dismiss()
@@ -119,19 +122,22 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     }
 
     private fun launchUpdateAlertDialog(scooter: Scooter, position: Int) {
-        val nameField = customAlertDialogView.findViewById<TextInputLayout>(R.id.name_text_field)
-        val whereField = customAlertDialogView.findViewById<TextInputLayout>(R.id.where_text_field)
-        nameField.editText?.setText(scooter.name)
+        val idField = customAlertDialogView.findViewById<TextInputLayout>(R.id.id_text_field)
+        val latField = customAlertDialogView.findViewById<TextInputLayout>(R.id.lat_text_field)
+        val lonField = customAlertDialogView.findViewById<TextInputLayout>(R.id.lon_text_field)
+        idField.editText?.setText(scooter.id)
 
         materialAlertDialogBuilder.setView(customAlertDialogView)
             .setTitle(getString(R.string.dialog_update_title))
             .setMessage(getString(R.string.dialog_update_message))
             .setPositiveButton(getString(R.string.update_button)) { dialog, _ ->
-                val name = nameField.editText?.text.toString()
-                val where = whereField.editText?.text.toString()
-                if (name.isNotEmpty()) {
-                    scooter.name = name
-                    scooter.where = where
+                val id = idField.editText?.text.toString()
+                val lat = latField.editText?.text.toString().toDouble()
+                val lon = lonField.editText?.text.toString().toDouble()
+                if (id.isNotEmpty()) {
+                    scooter.id = id
+                    scooter.lat = lat
+                    scooter.lon = lon
                     scooter.timestamp = System.currentTimeMillis()
 
                     val adapter = binding.listOfRides.adapter as RidesListXX
@@ -143,5 +149,23 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun getAddress(latitude: Double, longitude: Double): String {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        val stringBuilder = StringBuilder()
+        try {
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            if (addresses.isNotEmpty()) {
+                val address: Address = addresses[0]
+                stringBuilder.apply{
+                    append(address.getAddressLine(0)).append("\n")
+                    append(address.locality).append("\n")
+                    append(address.postalCode).append("\n")
+                    append(address.countryName)
+                }
+            } else return "Address not found!"
+        } catch (ex: IOException) {}
+        return stringBuilder.toString()
     }
 }
