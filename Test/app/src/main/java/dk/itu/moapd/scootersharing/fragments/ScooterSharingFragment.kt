@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import dk.itu.moapd.scootersharing.utils.BUCKET_URL
+import dk.itu.moapd.scootersharing.utils.DATABASE_URL
 import java.io.IOException
 import java.util.*
 import kotlin.random.Random
@@ -57,8 +59,8 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireContext()
         super.onViewCreated(view, savedInstanceState)
-        database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
-        storage = Firebase.storage("gs://scooter-sharing-2ac71.appspot.com")
+        database = Firebase.database(DATABASE_URL).reference
+        storage = Firebase.storage(BUCKET_URL)
         database.keepSynced(true)
 
         val query = database.child("scooters") //.orderByChild("timestamp")
@@ -105,6 +107,8 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                 if (id.isNotEmpty()) {
                     val timestamp = System.currentTimeMillis()
                     val battery = Random.nextInt(1, 100)
+                    val url = storage.reference.child("27-1108_xl_1.jpg").downloadUrl.toString()
+                    val path = storage.reference.child("27-1108_xl_1.jpg").toString()
                     val scooter = Scooter(id, lat, lon, battery, timestamp)
                     scooter.where = where
 

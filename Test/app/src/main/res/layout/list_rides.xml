@@ -22,6 +22,7 @@
 
                 <!-- Media -->
                 <ImageView
+                    android:id="@+id/image_view"
                     android:layout_width="match_parent"
                     android:layout_height="194dp"
                     app:srcCompat="@drawable/scootermedia2"
