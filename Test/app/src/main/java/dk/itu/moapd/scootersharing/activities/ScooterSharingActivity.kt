@@ -15,10 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
-import dk.itu.moapd.scootersharing.fragments.EditRideFragment
 import dk.itu.moapd.scootersharing.fragments.MapsFragment
 import dk.itu.moapd.scootersharing.fragments.ScooterSharingFragment
-import dk.itu.moapd.scootersharing.fragments.StartRideFragment
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.util.concurrent.TimeUnit
 
@@ -50,7 +48,7 @@ class ScooterSharingActivity : AppCompatActivity () {
         if (lastFragment == null) {
             viewModel.addFragment(ScooterSharingFragment())
             viewModel.addFragment(MapsFragment())
-            viewModel.addFragment(EditRideFragment())
+            viewModel.addFragment(ScooterSharingFragment())
             viewModel.setFragment(0)
         }
 

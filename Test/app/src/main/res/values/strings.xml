@@ -26,7 +26,10 @@
     <string name="content_description_sign_out">Sign out</string>
 
     <string name="enter_name">Enter Name</string>
+    <string name="enter_id">Enter ID</string>
     <string name="enter_where">Enter Where</string>
+    <string name="enter_lat">Enter Latitude</string>
+    <string name="enter_lon">Enter Longitude</string>
     <string name="dialog_add_title">Add Title</string>
     <string name="dialog_add_message">Add Message</string>
     <string name="cancel_button">Cancel</string>
