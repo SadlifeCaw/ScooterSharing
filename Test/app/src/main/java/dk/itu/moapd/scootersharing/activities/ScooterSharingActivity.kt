@@ -50,6 +50,7 @@ class ScooterSharingActivity : AppCompatActivity () {
 
         val lastFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
+        startLocationAware()
         if (lastFragment == null) {
             viewModel.addFragment(ScooterSharingFragment())
             viewModel.addFragment(MapsFragment())

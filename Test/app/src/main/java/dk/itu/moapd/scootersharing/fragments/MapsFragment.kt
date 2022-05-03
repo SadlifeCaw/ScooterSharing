@@ -55,10 +55,6 @@ class MapsFragment : Fragment(), OnMapsSdkInitializedCallback {
         })
 
         val itu = LatLng(55.6596, 12.5910)
-        googleMap.addMarker(MarkerOptions()
-            .position(itu)
-            .title("Marker in IT University of Copenhagen")
-        )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itu, 18f))
         googleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
 
