@@ -13,6 +13,8 @@
     <string name="edit_button">Edit Ride</string>
     <string name="back_button">Back</string>
     <string name="list_rides_button">List Rides</string>
+    <string name="reserve_button">Reserve</string>
+    <string name="more_info_button">More Info</string>
 
     <string name="alert_title">alert_title</string>
     <string name="alert_supporting_text">alert_supporting_text</string>
@@ -30,11 +32,11 @@
     <string name="enter_where">Enter Where</string>
     <string name="enter_lat">Enter Latitude</string>
     <string name="enter_lon">Enter Longitude</string>
-    <string name="dialog_add_title">Add Title</string>
-    <string name="dialog_add_message">Add Message</string>
+    <string name="dialog_add_title">Add New Scooter</string>
+    <string name="dialog_add_message">Please enter the ID of the bike you want to add, as well as the latitude and the longitude</string>
     <string name="cancel_button">Cancel</string>
-    <string name="dialog_update_title">Update Title</string>
-    <string name="dialog_update_message">Update Message</string>
+    <string name="dialog_update_title">Update existing Scooter</string>
+    <string name="dialog_update_message">Please enter the ID of the bike you want to update, as well as the latitude and the longitude</string>
 
     <string name="content_description_add">Add Description</string>
 
