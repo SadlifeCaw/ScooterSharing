@@ -20,7 +20,6 @@ import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.*
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
@@ -34,8 +33,6 @@ class MapsFragment : Fragment(), OnMapsSdkInitializedCallback {
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
     private lateinit var scooterArrayList: ArrayList<Scooter>
-    private lateinit var customAlertDialogView: View
-    private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
     private lateinit var markerName: String
     private lateinit var where: String
 
