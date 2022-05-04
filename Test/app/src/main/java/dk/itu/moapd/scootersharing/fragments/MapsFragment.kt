@@ -13,8 +13,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -44,6 +47,7 @@ class MapsFragment : Fragment(), OnMapsSdkInitializedCallback {
     private val callback = OnMapReadyCallback { googleMap ->
         ScooterSharingActivity.database.child("scooters").addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
+                val aContext = activity as AppCompatActivity
                 snapshot.children.forEach{
                     val pos = LatLng(it.child("lat").getValue(Double::class.java)!!,
                         it.child("lon").getValue(Double::class.java)!!)
@@ -61,7 +65,17 @@ class MapsFragment : Fragment(), OnMapsSdkInitializedCallback {
                             .setPositiveButton(
                                 getString(R.string.more_info_button),
                                 DialogInterface.OnClickListener { dialog, which ->
-
+                                    val args = Bundle()
+                                    args.putString("scooterid", markerName)
+                                    val fragment = ScooterViewFragment()
+                                    fragment.arguments = args
+                                    val fragmentManager: FragmentManager =
+                                        activity!!.supportFragmentManager
+                                    val fragmentTransaction: FragmentTransaction =
+                                        fragmentManager.beginTransaction()
+                                    fragmentTransaction.replace(R.id.fragment_container, fragment)
+                                    fragmentTransaction.addToBackStack(null)
+                                    fragmentTransaction.commit()
                                 })
                             .setNegativeButton(getString(R.string.back_button),
                                 DialogInterface.OnClickListener { dialog, which -> })
