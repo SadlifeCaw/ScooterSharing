@@ -34,10 +34,8 @@ class QrCodeAnalyzer(private val onQrCodesDetected: (qrCode: Result) -> Unit) : 
     }
 
     override fun analyze(image: ImageProxy) {
-        // We are using YUV format because, ImageProxy internally uses ImageReader to get the image
-        // by default ImageReader uses YUV format unless changed.
         if (image.format !in yuvFormats) {
-            Log.e("________________________________QRCodeAnalyzer", "Expected YUV, now = ${image.format}")
+            Log.e("QRCodeAnalyzer", "Expected YUV, now = ${image.format}")
             return
         }
 
@@ -56,8 +54,6 @@ class QrCodeAnalyzer(private val onQrCodesDetected: (qrCode: Result) -> Unit) : 
 
         val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
         try {
-            // Whenever reader fails to detect a QR code in image
-            // it throws NotFoundException
             val result = reader.decode(binaryBitmap)
             onQrCodesDetected(result)
         } catch (e: NotFoundException) {

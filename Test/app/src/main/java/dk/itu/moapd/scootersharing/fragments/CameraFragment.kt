@@ -72,7 +72,8 @@ class CameraFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        //ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        if (!allPermissionsGranted())
+            ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
     }
 
     override fun onDestroyView() {
@@ -114,10 +115,11 @@ class CameraFragment : Fragment() {
                     }
                 })
             }
+
         cameraProvider.unbindAll()
 
         cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
-        preview.setSurfaceProvider(view_finder.surfaceProvider);
+        preview.setSurfaceProvider(view_finder.surfaceProvider)
     }
 
     override fun onRequestPermissionsResult(

@@ -137,13 +137,9 @@ class ScooterSharingActivity : AppCompatActivity () {
 
     override fun onStart() {
         super.onStart()
-        val intent = Intent(this, ScanActivity::class.java)
-        startActivity(intent)
-        finish()
         if (auth.currentUser == null)
             startLoginActivity()
         val user = auth.currentUser
-        println(user)
     }
 
     override fun onResume() {
