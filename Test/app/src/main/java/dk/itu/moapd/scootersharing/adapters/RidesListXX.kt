@@ -20,11 +20,20 @@ import dk.itu.moapd.scootersharing.utils.BUCKET_URL
 class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
     FirebaseRecyclerAdapter<Scooter, RidesListXX.ViewHolder>(options) {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    var onItemClick: ((Scooter) -> Unit)? = null
+    var scooters: MutableList<Scooter> = mutableListOf()
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val id: TextView = view.findViewById(R.id.name1)
         val where: TextView = view.findViewById(R.id.where1)
         val timestamp: TextView = view.findViewById(R.id.timestamp1)
         val imageView: ImageView = view.findViewById(R.id.image_view)
+
+        init {
+            view.setOnClickListener{
+                onItemClick?.invoke(scooters[adapterPosition])
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,6 +43,7 @@ class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, scooter: Scooter) {
+        scooters.add(scooter)
         holder.apply {
             id.text = scooter.id
             where.text = scooter.where

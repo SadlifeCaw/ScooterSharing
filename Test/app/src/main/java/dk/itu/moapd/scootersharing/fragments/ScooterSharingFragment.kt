@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -60,7 +63,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         storage = Firebase.storage(BUCKET_URL)
         database.keepSynced(true)
 
-        val query = database.child("scooters") //.orderByChild("timestamp")
+        val query = database.child("scooters")
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(context)
 
@@ -68,6 +71,19 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
 
         with (binding) {
             adapter = RidesListXX(options)
+            adapter.onItemClick = { scooter ->
+                val args = Bundle()
+                args.putString("scooterid", scooter.id)
+                val fragment = ScooterViewFragment()
+                fragment.arguments = args
+                val fragmentManager: FragmentManager =
+                    requireActivity().supportFragmentManager
+                val fragmentTransaction: FragmentTransaction =
+                    fragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.fragment_container, fragment)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+            }
             listOfRides.layoutManager = LinearLayoutManager(context)
             listOfRides.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             listOfRides.adapter = adapter
@@ -83,7 +99,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     override fun onItemClickListener(scooter: Scooter, position: Int) {
         customAlertDialogView = LayoutInflater.from(context)
             .inflate(R.layout.dialog_add_data, binding.root, false)
-
         launchUpdateAlertDialog(scooter, position)
     }
 
@@ -104,9 +119,10 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                 if (id.isNotEmpty()) {
                     val timestamp = System.currentTimeMillis()
                     val battery = Random.nextInt(1, 100)
+                    val model = "Xiaomi Mi Pro 2"
                     val url = storage.reference.child("27-1108_xl_1.jpg").downloadUrl.toString()
                     val path = storage.reference.child("27-1108_xl_1.jpg").toString()
-                    val scooter = Scooter(id, lat, lon, battery, timestamp)
+                    val scooter = Scooter(id, lat, lon, battery, timestamp, model)
                     scooter.where = where
 
                    /* val uid = database.child("scooters")
@@ -115,8 +131,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                         .key*/
 
                     database.child("scooters")
-                        //.child(auth.currentUser?.uid!!)
-                        //.child(uid!!)
                         .child(scooter.id!!)
                         .setValue(scooter)
                 }

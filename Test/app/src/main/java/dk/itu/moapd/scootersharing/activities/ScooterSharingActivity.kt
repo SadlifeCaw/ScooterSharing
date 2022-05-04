@@ -14,12 +14,14 @@ import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
 import dk.itu.moapd.scootersharing.fragments.CameraFragment
 import dk.itu.moapd.scootersharing.fragments.MapsFragment
 import dk.itu.moapd.scootersharing.fragments.ScooterSharingFragment
+import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.util.concurrent.TimeUnit
 
@@ -48,6 +50,15 @@ class ScooterSharingActivity : AppCompatActivity () {
         binding = ActivityScooterSharingBinding.inflate(layoutInflater)
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
+        val userEmail = auth.currentUser?.email!!.replace(".", "(dot)")
+        val query = database.child("users").child(userEmail)
+        query.get().addOnSuccessListener{
+            val currentUser = it.getValue<User>()
+            if (currentUser?.email == null){
+                val user = User(auth.currentUser?.email!!, auth.currentUser?.email!!, "")
+                database.child("users").child(userEmail).setValue(user)
+            }
+        }
 
         val lastFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 

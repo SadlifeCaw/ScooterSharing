@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterViewBinding
 import dk.itu.moapd.scootersharing.models.Scooter
 
@@ -43,9 +45,15 @@ class ScooterViewFragment : Fragment() {
             val scooter = it.getValue<Scooter>()
             with(binding){
                 scootertitle.text = scooter?.id
+                scootermodel.text = scooter?.model
                 scooterlocation.text = scooter?.where
                 scootertime.text = scooter?.timestamp.toString()
                 scooterbatterylevel.text = scooter?.battery.toString()
+                reserveButton.setOnClickListener{
+                    database.child("scooters").child(scooterid).child("available").setValue(false)
+                    val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
+                    startActivity(intent)
+                }
             }
         }
     }

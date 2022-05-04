@@ -7,8 +7,10 @@ class Scooter(var id: String? = null,
               var lat: Double? = null,
               var lon: Double? = null,
               var battery: Int? = null,
-              var timestamp: Long? = null) {
+              var timestamp: Long? = null,
+              var model: String? = null) {
     var where = ""
+    var available = true
 
     override fun toString () : String {
         return " $id is placed at $where the ${timestamp?.toDateString()}"
