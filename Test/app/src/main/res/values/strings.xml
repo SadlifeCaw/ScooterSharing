@@ -15,6 +15,8 @@
     <string name="list_rides_button">List Rides</string>
     <string name="reserve_button">Reserve</string>
     <string name="more_info_button">More Info</string>
+    <string name="yes_button">Yes</string>
+    <string name="no_button">No</string>
 
     <string name="alert_title">alert_title</string>
     <string name="alert_supporting_text">alert_supporting_text</string>
@@ -26,6 +28,8 @@
     <string name="firebase_user_description">You are logged in as %s</string>
     <string name="sign_out">Sign out</string>
     <string name="content_description_sign_out">Sign out</string>
+    <string name="profile">Profile</string>
+    <string name="content_description_profile">Profile</string>
 
     <string name="enter_name">Enter Name</string>
     <string name="enter_id">Enter ID</string>
@@ -35,12 +39,26 @@
     <string name="dialog_add_title">Add New Scooter</string>
     <string name="dialog_add_message">Please enter the ID of the bike you want to add, as well as the latitude and the longitude</string>
     <string name="cancel_button">Cancel</string>
+    <string name="confirm_button">Confirm</string>
     <string name="dialog_update_title">Update existing Scooter</string>
     <string name="dialog_update_message">Please enter the ID of the bike you want to update, as well as the latitude and the longitude</string>
+    <string name="enter_new_displayname">Enter new name</string>
+
+    <string name="dialog_change_displayname_title">Change Display Name</string>
+    <string name="dialog_change_displayname_message">Please enter the new display name you wish to use for your profile</string>
+
     <string name="scooterid">Scooter ID</string>
     <string name="scooterlocation">Scooter Location</string>
     <string name="scootertime">Scooter Timestamp</string>
     <string name="scooterbatterylevel">Scooter Battery Level</string>
+    <string name="scootermodel">Scooter Model</string>
+
+    <string name="user_displayname">Display Name</string>
+    <string name="change_displayname_button">Change Name</string>
+    <string name="stop_renting_button">Stop Renting</string>
+    <string name="user_email">Email</string>
+    <string name="user_bikerental">Rental Info</string>
+
     <string name="content_description_add">Add Description</string>
     <string name="switch_camera">Switch camera</string>
     <string name="capture_camera">Capture</string>
@@ -48,4 +66,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="qr_code_found">QR Code Found</string>
     <string name="last_taken_image">Last taken image</string>
+    <string name="not_renting_scooter">You are currently not renting any scooter. Click the button below to go to the list of scooters you can rent</string>
+    <string name="rent_new_scooter_button">Rent Scooter</string>
 </resources>

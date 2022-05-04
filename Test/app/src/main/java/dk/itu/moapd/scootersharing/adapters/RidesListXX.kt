@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.adapters
 
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,15 +17,25 @@ import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
+import java.util.*
 
 class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
     FirebaseRecyclerAdapter<Scooter, RidesListXX.ViewHolder>(options) {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    var onItemClick: ((Scooter) -> Unit)? = null
+    var scooters: MutableList<Scooter> = mutableListOf()
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val id: TextView = view.findViewById(R.id.name1)
         val where: TextView = view.findViewById(R.id.where1)
         val timestamp: TextView = view.findViewById(R.id.timestamp1)
         val imageView: ImageView = view.findViewById(R.id.image_view)
+
+        init {
+            view.setOnClickListener{
+                onItemClick?.invoke(scooters[adapterPosition])
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,11 +45,18 @@ class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, scooter: Scooter) {
+        scooters.add(scooter)
         holder.apply {
             id.text = scooter.id
             where.text = scooter.where
-            timestamp.text = scooter.timestamp.toString()
+            timestamp.text = scooter.timestamp?.toDateString()
         }
+    }
+
+    fun Long.toDateString() : String {
+        val date = Date(this)
+        val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        return format.format(date)
     }
 }
 /*
