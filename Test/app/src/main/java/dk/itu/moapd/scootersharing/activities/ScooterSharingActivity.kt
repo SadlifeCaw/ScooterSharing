@@ -17,6 +17,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
+import dk.itu.moapd.scootersharing.fragments.CameraFragment
 import dk.itu.moapd.scootersharing.fragments.MapsFragment
 import dk.itu.moapd.scootersharing.fragments.ScooterSharingFragment
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
@@ -54,7 +55,7 @@ class ScooterSharingActivity : AppCompatActivity () {
         if (lastFragment == null) {
             viewModel.addFragment(ScooterSharingFragment())
             viewModel.addFragment(MapsFragment())
-            viewModel.addFragment(ScooterSharingFragment())
+            viewModel.addFragment(CameraFragment())
             viewModel.setFragment(0)
         }
 
