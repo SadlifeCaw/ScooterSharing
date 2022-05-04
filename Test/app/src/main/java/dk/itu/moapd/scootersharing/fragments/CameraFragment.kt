@@ -1,38 +1,27 @@
 package dk.itu.moapd.scootersharing.fragments
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.R
-import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
+import dk.itu.moapd.scootersharing.activities.PhotoActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentCameraBinding
-import dk.itu.moapd.scootersharing.databinding.FragmentScooterSharingBinding
-import dk.itu.moapd.scootersharing.interfaces.QRCodeListener
-import dk.itu.moapd.scootersharing.utils.QrCodeAnalyzer
-import kotlinx.android.synthetic.main.activity_scooter_sharing.*
-import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.File
-import java.util.concurrent.Executor
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -40,8 +29,10 @@ class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private lateinit var cameraExecutor: ExecutorService
-    private var qrCode: String = "No Information"
-    private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
+    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private lateinit var outputDirectory: File
+    private var imageUri: Uri? = null
+    private var imageCapture: ImageCapture? = null
 
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -56,39 +47,67 @@ class CameraFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cameraExecutor = Executors.newSingleThreadExecutor()
+
 
         if (allPermissionsGranted())
             startCamera()
+        else
+            ActivityCompat.requestPermissions(
+                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
 
         with (binding) {
             // Set up the listener for the change camera button.
-            qrCodeFoundButton.visibility = View.VISIBLE
-            qrCodeFoundButton.setOnClickListener{
-                Toast.makeText(activity, qrCode, Toast.LENGTH_SHORT).show()
+            cameraSwitchButton.let {
+                // Disable the button until the camera is set up
+                it.isEnabled = false
+
+                // Listener for button used to switch cameras. Only called if the button is enabled
+                it.setOnClickListener {
+                    cameraSelector = if (CameraSelector.DEFAULT_FRONT_CAMERA == cameraSelector)
+                        CameraSelector.DEFAULT_BACK_CAMERA
+                    else
+                        CameraSelector.DEFAULT_FRONT_CAMERA
+
+                    // Re-start use cases to update selected camera.
+                    startCamera()
+                }
+            }
+
+            cameraCaptureButton.setOnClickListener {
+                Log.d("Output file Secound", outputDirectory.toString())
+                takePhoto()
+            }
+
+            // Set up the listener for the photo view button.
+            photoViewButton.setOnClickListener {
+                if (imageUri != null) {
+                    val intent = Intent(requireContext(), PhotoActivity::class.java).apply {
+                        putExtra("uri", imageUri.toString())
+                    }
+                    startActivity(intent)
+                }
             }
         }
+
+        outputDirectory = getOutputDirectory()
+        Log.d("Output File First", outputDirectory.toString())
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!allPermissionsGranted())
-            ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(requireActivity().baseContext, it) == PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun startCamera() {
         // Create an instance of the `ProcessCameraProvider` to bind the lifecycle of cameras to the
         // lifecycle owner.
-        cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         // Add a listener to the `cameraProviderFuture`.
         cameraProviderFuture.addListener(Runnable{
@@ -99,27 +118,21 @@ class CameraFragment : Fragment() {
     }
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider){
-        val preview : Preview = Preview.Builder().build()
+        val preview : Preview = Preview.Builder().build().also {
+            it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+        }
 
-        val cameraSelector : CameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+        imageCapture = ImageCapture.Builder().build()
 
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(Size(view_finder.width, view_finder.height))
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-            .also {
-                it.setAnalyzer(cameraExecutor, QrCodeAnalyzer { qrResult ->
-                    view_finder.post {
-                        Toast.makeText(context, qrResult.text,Toast.LENGTH_SHORT).show()
-                        requireActivity().finish()
-                    }
-                })
-            }
+        try {
+            cameraProvider.unbindAll()
 
-        cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
 
-        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
-        preview.setSurfaceProvider(view_finder.surfaceProvider)
+            updateCameraSwitchButton(cameraProvider)
+        } catch (ex: Exception){
+            Log.e("ToMyInfo", "Use case binding failed", ex)
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -145,4 +158,58 @@ class CameraFragment : Fragment() {
             }
         }
     }
+
+    private fun updateCameraSwitchButton(provider: ProcessCameraProvider) {
+        try {
+            binding.cameraSwitchButton.isEnabled =
+                hasBackCamera(provider) && hasFrontCamera(provider)
+        } catch (exception: CameraInfoUnavailableException) {
+            binding.cameraSwitchButton.isEnabled = false
+        }
+    }
+
+    private fun hasFrontCamera(provider: ProcessCameraProvider) = provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
+    private fun hasBackCamera(provider: ProcessCameraProvider) = provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+
+    private fun takePhoto() {
+        // Get a stable reference of the modifiable image capture use case.
+        val imageCapture = imageCapture ?: return
+
+        // Create time-stamped output file to hold the image.
+        val photoFile = File(outputDirectory,
+            SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+                .format(System.currentTimeMillis()) + ".jpg")
+
+        // Create output options object which contains file + metadata.
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+
+        // Set up image capture listener, which is triggered after photo has been taken.
+        imageCapture.takePicture(
+            outputOptions, ContextCompat.getMainExecutor(requireContext()),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    imageUri = Uri.fromFile(photoFile)
+                    val msg = "Photo capture succeeded: $imageUri"
+                    toast(msg)
+                    Log.d("OnImageSaved", msg)
+                }
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e("OnImageSavedError", "Photo capture failed: ${exc.message}", exc)
+                }
+            }
+        )
+    }
+
+    private fun getOutputDirectory(): File {
+        val mediaDir = activity?.externalMediaDirs?.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+        return if (mediaDir != null && mediaDir.exists()) mediaDir else activity?.filesDir!!
+    }
+
+    private fun toast(text: CharSequence,
+                      duration: Int = Toast.LENGTH_SHORT) {
+        Toast.makeText(requireContext(), text, duration).show()
+    }
+
 }
