@@ -1,6 +1,7 @@
 package dk.itu.moapd.scootersharing.activities
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -124,6 +125,7 @@ class ScooterSharingActivity : AppCompatActivity () {
                 }
             }
         }
+        //this refers to activity context
 
         // MÅSKE DETTE: setContentView(R.layout.activity_scooter_sharing)
         setContentView(binding.root)
