@@ -70,8 +70,6 @@ class ScooterViewFragment : Fragment() {
                             val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
                             startActivity(intent)
                         } else {
-                            val toastText = "You are already renting ${currentUser?.rentedScooterID}."
-                            Toast.makeText(requireContext(),toastText,Toast.LENGTH_SHORT).show()
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Already renting a scooter")
                                 .setMessage("You are already renting ${currentUser?.rentedScooterID}. Do you want to change this to $scooterid?")

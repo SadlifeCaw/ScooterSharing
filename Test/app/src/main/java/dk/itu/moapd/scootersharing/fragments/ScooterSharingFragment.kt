@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.fragments
 
+import android.annotation.SuppressLint
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -24,8 +25,10 @@ import dk.itu.moapd.scootersharing.databinding.FragmentScooterSharingBinding
 import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
 import dk.itu.moapd.scootersharing.utils.DATABASE_URL
 import java.io.IOException
@@ -56,6 +59,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         _binding = null
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireContext()
         super.onViewCreated(view, savedInstanceState)
@@ -63,7 +67,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         storage = Firebase.storage(BUCKET_URL)
         database.keepSynced(true)
 
-        val query = database.child("scooters")
+        val query = database.child("scooters").orderByChild("available").equalTo(true)
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(context)
 
@@ -92,7 +96,11 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                     .inflate(R.layout.dialog_add_data, binding.root, false)
                 launchInsertAlertDialog()
             }
-            description.text = auth.currentUser?.email
+            val userQuery = database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)"))
+            userQuery.get().addOnSuccessListener {
+                val currentUser = it.getValue<User>()
+                description.text = "Hello " + currentUser?.displayname + "!"
+            }
         }
     }
 

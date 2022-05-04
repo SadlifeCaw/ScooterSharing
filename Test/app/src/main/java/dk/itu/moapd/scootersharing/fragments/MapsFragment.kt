@@ -45,7 +45,7 @@ class MapsFragment : Fragment(), OnMapsSdkInitializedCallback {
 
     @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
-        ScooterSharingActivity.database.child("scooters").addValueEventListener(object : ValueEventListener{
+        ScooterSharingActivity.database.child("scooters").orderByChild("available").equalTo(true).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val aContext = activity as AppCompatActivity
                 snapshot.children.forEach{

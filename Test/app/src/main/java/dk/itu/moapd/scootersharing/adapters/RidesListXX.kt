@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.adapters
 
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
+import java.util.*
 
 class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
     FirebaseRecyclerAdapter<Scooter, RidesListXX.ViewHolder>(options) {
@@ -47,8 +49,14 @@ class RidesListXX(options: FirebaseRecyclerOptions<Scooter>) :
         holder.apply {
             id.text = scooter.id
             where.text = scooter.where
-            timestamp.text = scooter.timestamp.toString()
+            timestamp.text = scooter.timestamp?.toDateString()
         }
+    }
+
+    fun Long.toDateString() : String {
+        val date = Date(this)
+        val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        return format.format(date)
     }
 }
 /*

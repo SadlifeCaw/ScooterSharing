@@ -28,6 +28,8 @@
     <string name="firebase_user_description">You are logged in as %s</string>
     <string name="sign_out">Sign out</string>
     <string name="content_description_sign_out">Sign out</string>
+    <string name="profile">Profile</string>
+    <string name="content_description_profile">Profile</string>
 
     <string name="enter_name">Enter Name</string>
     <string name="enter_id">Enter ID</string>
@@ -37,14 +39,24 @@
     <string name="dialog_add_title">Add New Scooter</string>
     <string name="dialog_add_message">Please enter the ID of the bike you want to add, as well as the latitude and the longitude</string>
     <string name="cancel_button">Cancel</string>
+    <string name="confirm_button">Confirm</string>
     <string name="dialog_update_title">Update existing Scooter</string>
     <string name="dialog_update_message">Please enter the ID of the bike you want to update, as well as the latitude and the longitude</string>
+    <string name="enter_new_displayname">Enter new name</string>
+
+    <string name="dialog_change_displayname_title">Change Display Name</string>
+    <string name="dialog_change_displayname_message">Please enter the new display name you wish to use for your profile</string>
 
     <string name="scooterid">Scooter ID</string>
     <string name="scooterlocation">Scooter Location</string>
     <string name="scootertime">Scooter Timestamp</string>
     <string name="scooterbatterylevel">Scooter Battery Level</string>
     <string name="scootermodel">Scooter Model</string>
+
+    <string name="user_displayname">Display Name</string>
+    <string name="change_displayname_button">Change Name</string>
+    <string name="user_email">Email</string>
+    <string name="user_bikerental">Rental Info</string>
 
     <string name="content_description_add">Add Description</string>
     <string name="switch_camera">Switch camera</string>

@@ -18,9 +18,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
-import dk.itu.moapd.scootersharing.fragments.CameraFragment
-import dk.itu.moapd.scootersharing.fragments.MapsFragment
-import dk.itu.moapd.scootersharing.fragments.ScooterSharingFragment
+import dk.itu.moapd.scootersharing.fragments.*
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.util.concurrent.TimeUnit
@@ -67,6 +65,7 @@ class ScooterSharingActivity : AppCompatActivity () {
             viewModel.addFragment(ScooterSharingFragment())
             viewModel.addFragment(MapsFragment())
             viewModel.addFragment(CameraFragment())
+            viewModel.addFragment(UserViewFragment())
             viewModel.setFragment(0)
         }
 
@@ -98,9 +97,13 @@ class ScooterSharingActivity : AppCompatActivity () {
 
             topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.more -> {
+                    R.id.sign_out -> {
                         auth.signOut()
                         startLoginActivity()
+                        true
+                    }
+                    R.id.profile -> {
+                        viewModel.setFragment(3)
                         true
                     }
                     else -> false
