@@ -36,7 +36,7 @@ class ScooterSharingActivity : AppCompatActivity () {
 
     companion object {
         private const val ALL_PERMISSIONS_RESULT = 1011
-        public lateinit var database : DatabaseReference
+        lateinit var database : DatabaseReference
     }
 
     private val viewModel: MainActivityVM by lazy {
@@ -150,7 +150,6 @@ class ScooterSharingActivity : AppCompatActivity () {
         super.onStart()
         if (auth.currentUser == null)
             startLoginActivity()
-        val user = auth.currentUser
     }
 
     override fun onResume() {
