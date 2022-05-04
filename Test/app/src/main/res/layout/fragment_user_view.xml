@@ -28,6 +28,12 @@
         android:text="@string/user_email" />
 
     <TextView
+        android:id="@+id/user_debt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user_debt" />
+
+    <TextView
         android:id="@+id/user_bikerental"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

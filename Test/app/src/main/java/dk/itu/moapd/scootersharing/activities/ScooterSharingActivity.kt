@@ -53,7 +53,7 @@ class ScooterSharingActivity : AppCompatActivity () {
         query.get().addOnSuccessListener{
             val currentUser = it.getValue<User>()
             if (currentUser?.email == null){
-                val user = User(auth.currentUser?.email!!, auth.currentUser?.email!!, "")
+                val user = User(auth.currentUser?.email!!, auth.currentUser?.email!!, "", 0.0)
                 database.child("users").child(userEmail).setValue(user)
             }
         }
