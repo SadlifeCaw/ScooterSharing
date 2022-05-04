@@ -11,18 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/firebase_user_description" />
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/firebase_user_description" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list_of_rides"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/list_rides"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_of_rides"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/list_rides"/>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -34,4 +34,3 @@
         android:contentDescription="@string/content_description_add"
         app:srcCompat="@drawable/ic_baseline_add_24" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
