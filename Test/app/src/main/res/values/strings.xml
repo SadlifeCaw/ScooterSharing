@@ -37,13 +37,10 @@
     <string name="cancel_button">Cancel</string>
     <string name="dialog_update_title">Update existing Scooter</string>
     <string name="dialog_update_message">Please enter the ID of the bike you want to update, as well as the latitude and the longitude</string>
-
     <string name="scooterid">Scooter ID</string>
     <string name="scooterlocation">Scooter Location</string>
     <string name="scootertime">Scooter Timestamp</string>
     <string name="scooterbatterylevel">Scooter Battery Level</string>
-
-
     <string name="content_description_add">Add Description</string>
     <string name="switch_camera">Switch camera</string>
     <string name="capture_camera">Capture</string>

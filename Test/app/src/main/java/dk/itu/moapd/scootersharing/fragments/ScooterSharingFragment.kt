@@ -42,7 +42,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         private lateinit var adapter : RidesListXX
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentScooterSharingBinding.inflate(inflater, container, false)
         auth = FirebaseAuth.getInstance()
         return binding.root
@@ -76,7 +76,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                     .inflate(R.layout.dialog_add_data, binding.root, false)
                 launchInsertAlertDialog()
             }
-            description.setText(auth.currentUser?.email)
+            description.text = auth.currentUser?.email
         }
     }
 
