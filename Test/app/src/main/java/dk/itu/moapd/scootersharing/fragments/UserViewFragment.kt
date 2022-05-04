@@ -1,5 +1,6 @@
 package dk.itu.moapd.scootersharing.fragments
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -19,6 +20,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
+import dk.itu.moapd.scootersharing.activities.LoginActivity
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterViewBinding
 import dk.itu.moapd.scootersharing.databinding.FragmentUserViewBinding
@@ -54,6 +56,7 @@ class UserViewFragment : Fragment() {
         getUser(user)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getUser(userEmail: String) {
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
@@ -64,7 +67,30 @@ class UserViewFragment : Fragment() {
             with(binding){
                 user_email.text = currentUser?.email
                 user_displayname.text = currentUser?.displayname
-                user_bikerental.text = currentUser?.rentedScooterID
+                if (currentUser?.rentedScooterID != "") {
+                    stopRentingButton.text = getString(R.string.stop_renting_button)
+                    user_bikerental.text = "You are currently renting scooter ${currentUser?.rentedScooterID}. In case you want to stop renting it, you can click the button below."
+                    stopRentingButton.setOnClickListener{
+                        database.child("scooters").child(currentUser?.rentedScooterID!!).child("available").setValue(true)
+                        database.child("users").child(userEmail).child("rentedScooterID").setValue("")
+
+                        val fragment = UserViewFragment()
+                        val fragmentManager: FragmentManager =
+                            requireActivity().supportFragmentManager
+                        val fragmentTransaction: FragmentTransaction =
+                            fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(R.id.fragment_container, fragment)
+                        fragmentTransaction.addToBackStack(null)
+                        fragmentTransaction.commit()
+                    }
+                } else {
+                    stopRentingButton.text = getString(R.string.rent_new_scooter_button)
+                    user_bikerental.text = getString(R.string.not_renting_scooter)
+                    stopRentingButton.setOnClickListener{
+                        val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
                 changeDisplaynameButton.setOnClickListener{
                     customAlertDialogView = LayoutInflater.from(context)
                         .inflate(R.layout.dialog_change_displayname, binding.root, false)
@@ -86,6 +112,7 @@ class UserViewFragment : Fragment() {
                     database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)")).child("displayname").setValue(newName)
                 }
                 dialog.dismiss()
+
                 val fragment = UserViewFragment()
                 val fragmentManager: FragmentManager =
                     requireActivity().supportFragmentManager

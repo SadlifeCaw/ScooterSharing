@@ -55,6 +55,7 @@
 
     <string name="user_displayname">Display Name</string>
     <string name="change_displayname_button">Change Name</string>
+    <string name="stop_renting_button">Stop Renting</string>
     <string name="user_email">Email</string>
     <string name="user_bikerental">Rental Info</string>
 
@@ -64,4 +65,7 @@
     <string name="gallery_camera">Gallery</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="qr_code_found">QR Code Found</string>
+
+    <string name="not_renting_scooter">You are currently not renting any scooter. Click the button below to go to the list of scooters you can rent</string>
+    <string name="rent_new_scooter_button">Rent Scooter</string>
 </resources>
