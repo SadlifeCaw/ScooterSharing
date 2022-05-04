@@ -4,34 +4,44 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.camera.core.CameraInfoUnavailableException
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentCameraBinding
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterSharingBinding
+import dk.itu.moapd.scootersharing.interfaces.QRCodeListener
+import dk.itu.moapd.scootersharing.utils.QrCodeAnalyzer
 import kotlinx.android.synthetic.main.activity_scooter_sharing.*
+import kotlinx.android.synthetic.main.fragment_camera.*
 import java.io.File
+import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-    private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
-    private var imageUri: Uri? = null
-    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private var imageCapture: ImageCapture? = null
+    private var qrCode: String = "No Information"
+    private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
 
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
@@ -46,36 +56,24 @@ class CameraFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
         if (allPermissionsGranted())
             startCamera()
-        else
-            ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
 
         with (binding) {
-
-            // Set up the listener for take photo button.
-            cameraCaptureButton.setOnClickListener {
-                //takePhoto() should import this method
-            }
-
             // Set up the listener for the change camera button.
-            cameraSwitchButton.let {
-                // Disable the button until the camera is set up
-                it.isEnabled = false
-
-                // Listener for button used to switch cameras. Only called if the button is enabled
-                it.setOnClickListener {
-                    cameraSelector = if (CameraSelector.DEFAULT_FRONT_CAMERA == cameraSelector)
-                        CameraSelector.DEFAULT_BACK_CAMERA
-                    else
-                        CameraSelector.DEFAULT_FRONT_CAMERA
-
-                    // Re-start use cases to update selected camera.
-                    startCamera()
-                }
+            qrCodeFoundButton.visibility = View.VISIBLE
+            qrCodeFoundButton.setOnClickListener{
+                Toast.makeText(activity, qrCode, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!allPermissionsGranted())
+            ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
     }
 
     override fun onDestroyView() {
@@ -84,58 +82,67 @@ class CameraFragment : Fragment() {
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            requireActivity().baseContext, it) == PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(requireActivity().baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun startCamera() {
         // Create an instance of the `ProcessCameraProvider` to bind the lifecycle of cameras to the
         // lifecycle owner.
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(fragment_container.context)
+        cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
 
         // Add a listener to the `cameraProviderFuture`.
-        cameraProviderFuture.addListener({
-
+        cameraProviderFuture.addListener(Runnable{
             // Used to bind the lifecycle of cameras to the lifecycle owner.
             val cameraProvider = cameraProviderFuture.get()
-
-            // Video camera streaming preview.
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-            }
-
-            // Set up the image capture by getting a reference to the `ImageCapture`.
-            imageCapture = ImageCapture.Builder().build()
-
-            try {
-                // Unbind use cases before rebinding.
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera.
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture)
-
-                // Update the camera switch button.
-                updateCameraSwitchButton(cameraProvider)
-
-            } catch(ex: Exception) {
-                print("Use case binding failed")
-            }
-
-        }, ContextCompat.getMainExecutor(fragment_container.context))
+            bindPreview(cameraProvider)
+        }, ContextCompat.getMainExecutor(requireActivity()))
     }
 
-    private fun updateCameraSwitchButton(provider: ProcessCameraProvider) {
-        try {
-            binding.cameraSwitchButton.isEnabled =
-                hasBackCamera(provider) && hasFrontCamera(provider)
-        } catch (exception: CameraInfoUnavailableException) {
-            binding.cameraSwitchButton.isEnabled = false
+    private fun bindPreview(cameraProvider: ProcessCameraProvider){
+        val preview : Preview = Preview.Builder().build()
+
+        val cameraSelector : CameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setTargetResolution(Size(view_finder.width, view_finder.height))
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+            .also {
+                it.setAnalyzer(cameraExecutor, QrCodeAnalyzer { qrResult ->
+                    view_finder.post {
+                        Toast.makeText(context, qrResult.text,Toast.LENGTH_SHORT).show()
+                        requireActivity().finish()
+                    }
+                })
+            }
+
+        cameraProvider.unbindAll()
+
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+        preview.setSurfaceProvider(view_finder.surfaceProvider)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+                Toast.makeText(
+                    context,
+                    "Permissions granted by the user.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                startCamera()
+            } else {
+                Toast.makeText(
+                    context,
+                    "Permissions not granted by the user.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                requireActivity().finish()
+            }
         }
     }
-
-    private fun hasBackCamera(provider: ProcessCameraProvider) =
-        provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
-    private fun hasFrontCamera(provider: ProcessCameraProvider) =
-        provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
 }

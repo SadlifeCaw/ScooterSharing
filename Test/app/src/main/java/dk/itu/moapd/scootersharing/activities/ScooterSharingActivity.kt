@@ -140,7 +140,6 @@ class ScooterSharingActivity : AppCompatActivity () {
         if (auth.currentUser == null)
             startLoginActivity()
         val user = auth.currentUser
-        println(user)
     }
 
     override fun onResume() {
