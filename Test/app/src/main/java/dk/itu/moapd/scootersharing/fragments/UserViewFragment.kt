@@ -67,8 +67,8 @@ class UserViewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
         viewModel = ViewModelProvider(context as ScooterSharingActivity).get(MainActivityVM::class.java)
-        val nameOpserver = Observer<String> {newName -> user_displayname.text = newName}
-        viewModel.displayname.observe(viewLifecycleOwner, nameOpserver)
+        val nameObserver = Observer<String> {newName -> user_displayname.text = newName}
+        viewModel.displayname.observe(viewLifecycleOwner, nameObserver)
         getUser(user)
     }
 
