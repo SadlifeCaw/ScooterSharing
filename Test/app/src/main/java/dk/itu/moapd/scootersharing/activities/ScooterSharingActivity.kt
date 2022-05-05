@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
 import dk.itu.moapd.scootersharing.fragments.*
+import dk.itu.moapd.scootersharing.models.Smodel
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.util.concurrent.TimeUnit
@@ -58,6 +59,8 @@ class ScooterSharingActivity : AppCompatActivity () {
                 database.child("users").child(userEmail).setValue(user)
             }
         }
+
+        defineModels()
 
         val lastFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
@@ -238,5 +241,17 @@ class ScooterSharingActivity : AppCompatActivity () {
         // Unsubscribe to location changes.
         fusedLocationProviderClient
             .removeLocationUpdates(locationCallback)
+    }
+
+    private fun defineModels(){
+        val model1 = "Xiaomi PRO 2"
+        val model2 = "VSETT 9 13Ah"
+        val model3 = "Kaabo Mantis 10 PRO"
+        val smodels = listOf(model1, model2, model3)
+        var counter = 0
+        for (s in smodels){
+            database.child("models").child(counter.toString()).setValue(Smodel(counter, s, s.replace(" ", "_").lowercase()))
+            counter++
+        }
     }
 }

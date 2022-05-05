@@ -3,26 +3,26 @@ package dk.itu.moapd.scootersharing.fragments
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.auth.FirebaseAuth
+import dk.itu.moapd.scootersharing.R
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterViewBinding
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.models.User
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.util.*
 
 
 class ScooterViewFragment : Fragment() {
@@ -57,10 +57,12 @@ class ScooterViewFragment : Fragment() {
             val scooter = it.getValue<Scooter>()
             with(binding){
                 scootertitle.text = scooter?.id
+                val imgid = resources.getIdentifier(scooter?.imgstring, "drawable", requireContext().getPackageName())
+                imageView.setImageDrawable(getDrawable(requireContext(), imgid))
                 scootermodel.text = scooter?.model
                 scooterlocation.text = scooter?.where
-                scootertime.text = scooter?.timestamp.toString()
-                scooterbatterylevel.text = scooter?.battery.toString()
+                scootertime.text = scooter?.timestamp!!.toDateString()
+                scooterbatterylevel.text = scooter.battery.toString()
                 reserveButton.setOnClickListener{
                     val userEmail = auth.currentUser?.email!!.replace(".", "(dot)")
                     val userquery = database.child("users").child(userEmail)
@@ -104,5 +106,10 @@ class ScooterViewFragment : Fragment() {
                 }
             }
         }
+    }
+    fun Long.toDateString() : String {
+        val date = Date(this)
+        val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        return format.format(date)
     }
 }

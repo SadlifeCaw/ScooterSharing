@@ -78,6 +78,28 @@ class UserViewFragment : Fragment() {
                 if (currentUser?.debt!! > 0.0){
                     user_debt.text = "You currently owe our company $" + currentUser.debt.toString()
                 }
+                if (currentUser.debt == 0.0){
+                    payButton.setOnClickListener{
+                        val toast = Toast.makeText(requireContext(), "You have no debt to pay.", Toast.LENGTH_SHORT)
+                        toast.show()
+                    }
+                } else if (currentUser.rentedScooterID != ""){
+                    payButton.setOnClickListener{
+                        val toast = Toast.makeText(requireContext(), "You are currently renting a scooter. Please finish renting it before paying.", Toast.LENGTH_LONG)
+                        toast.show()
+                    }
+                } else {
+                    payButton.setOnClickListener{
+                        val fragment = PayFragment()
+                        val fragmentManager: FragmentManager =
+                            requireActivity().supportFragmentManager
+                        val fragmentTransaction: FragmentTransaction =
+                            fragmentManager.beginTransaction()
+                        fragmentTransaction.replace(R.id.fragment_container, fragment)
+                        fragmentTransaction.addToBackStack(null)
+                        fragmentTransaction.commit()
+                    }
+                }
 
                 if (currentUser.rentedScooterID != "") {
                     stopRentingButton.text = getString(R.string.stop_renting_button)

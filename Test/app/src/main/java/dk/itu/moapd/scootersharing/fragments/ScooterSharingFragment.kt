@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -28,10 +27,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import dk.itu.moapd.scootersharing.models.Smodel
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
 import dk.itu.moapd.scootersharing.utils.DATABASE_URL
-import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import java.io.IOException
 import java.util.*
 import kotlin.random.Random
@@ -126,22 +125,23 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                 val where = getAddress(lat, lon)
 
                 if (id.isNotEmpty()) {
+                    var battery = Random.nextInt(1, 100)
                     val timestamp = System.currentTimeMillis()
-                    val battery = Random.nextInt(1, 100)
-                    val model = "Xiaomi Mi Pro 2"
-                    val url = storage.reference.child("27-1108_xl_1.jpg").downloadUrl.toString()
-                    val path = storage.reference.child("27-1108_xl_1.jpg").toString()
-                    val scooter = Scooter(id, lat, lon, battery, timestamp, model)
-                    scooter.where = where
+                    if (Random.nextInt(0,2) > 0){
+                        battery = 100
+                    }
+                    val modelNO = Random.nextInt(0,3)
+                    val modelQuery = database.child("models").child(modelNO.toString())
+                    modelQuery.get().addOnSuccessListener {
+                        val smodel = it.getValue<Smodel>()
+                        val scooter = Scooter(id, lat, lon, battery, timestamp, smodel?.name, smodel?.imgstring)
+                        scooter.where = where
 
-                   /* val uid = database.child("scooters")
-                        .child(auth.currentUser?.uid!!)
-                        .push()
-                        .key*/
 
-                    database.child("scooters")
-                        .child(scooter.id!!)
-                        .setValue(scooter)
+                        database.child("scooters")
+                            .child(scooter.id!!)
+                            .setValue(scooter)
+                    }
                 }
                 dialog.dismiss()
             }

@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -47,7 +46,6 @@ class MapsFragment : Fragment(), OnMapsSdkInitializedCallback {
     private val callback = OnMapReadyCallback { googleMap ->
         ScooterSharingActivity.database.child("scooters").orderByChild("available").equalTo(true).addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-                val aContext = activity as AppCompatActivity
                 snapshot.children.forEach{
                     val pos = LatLng(it.child("lat").getValue(Double::class.java)!!,
                         it.child("lon").getValue(Double::class.java)!!)

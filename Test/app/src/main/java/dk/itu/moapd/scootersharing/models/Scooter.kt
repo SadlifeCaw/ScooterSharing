@@ -8,7 +8,8 @@ class Scooter(var id: String? = null,
               var lon: Double? = null,
               var battery: Int? = null,
               var timestamp: Long? = null,
-              var model: String? = null) {
+              var model: String? = null,
+              var imgstring: String? = null) {
     var where = ""
     var available = true
 

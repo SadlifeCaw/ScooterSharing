@@ -33,6 +33,15 @@
         android:layout_height="wrap_content"
         android:text="@string/user_debt" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/pay_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:text="@string/pay_button"
+        app:srcCompat="@drawable/ic_baseline_add_24" />
+
     <TextView
         android:id="@+id/user_bikerental"
         android:layout_width="wrap_content"
