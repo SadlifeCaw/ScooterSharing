@@ -139,9 +139,6 @@ class ScooterSharingActivity : AppCompatActivity () {
                 }
             }
         }
-        //this refers to activity context
-
-        // MÅSKE DETTE: setContentView(R.layout.activity_scooter_sharing)
         setContentView(binding.root)
     }
 

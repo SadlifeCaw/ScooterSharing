@@ -31,6 +31,7 @@ import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
 import dk.itu.moapd.scootersharing.utils.DATABASE_URL
+import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import java.io.IOException
 import java.util.*
 import kotlin.random.Random

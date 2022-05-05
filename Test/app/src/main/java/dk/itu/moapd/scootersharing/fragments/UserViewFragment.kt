@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -21,12 +22,14 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.activities.LoginActivity
+import dk.itu.moapd.scootersharing.activities.PhotoActivity
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterViewBinding
 import dk.itu.moapd.scootersharing.databinding.FragmentUserViewBinding
 import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.models.User
+import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import kotlinx.android.synthetic.main.fragment_user_view.*
 
 
@@ -113,14 +116,12 @@ class UserViewFragment : Fragment() {
                 }
                 dialog.dismiss()
 
-                val fragment = UserViewFragment()
-                val fragmentManager: FragmentManager =
-                    requireActivity().supportFragmentManager
-                val fragmentTransaction: FragmentTransaction =
-                    fragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.fragment_container, fragment)
-                fragmentTransaction.addToBackStack(null)
-                fragmentTransaction.commit()
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .hide(this)
+                    .show(UserViewFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit()
             }
             .setNegativeButton(getString(R.string.cancel_button)) { dialog, _ ->
                 dialog.dismiss()
