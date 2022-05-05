@@ -7,10 +7,15 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import com.enozom.poc.e_invoice.ZATCAScannerActivity
+import com.enozom.poc.e_invoice.utils.ZATCAQRCode
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -25,6 +30,7 @@ import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.util.concurrent.TimeUnit
 
 class ScooterSharingActivity : AppCompatActivity () {
+
     private lateinit var binding: ActivityScooterSharingBinding
 
     private lateinit var auth: FirebaseAuth
@@ -67,7 +73,7 @@ class ScooterSharingActivity : AppCompatActivity () {
             viewModel.addFragment(MapsFragment())
             viewModel.addFragment(CameraFragment())
             viewModel.addFragment(UserViewFragment())
-            //viewModel.addFragment(QrFragment())
+            viewModel.addFragment(QrFragment())
             viewModel.setFragment(0)
         }
 
@@ -131,7 +137,7 @@ class ScooterSharingActivity : AppCompatActivity () {
 
                     // Select the Fragment 3 bottom.
                     R.id.page_3 -> {
-                        viewModel.setFragment(2)
+                        viewModel.setFragment(4)
                         viewModel.setButtonId(R.id.page_3)
                         true
                     }

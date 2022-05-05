@@ -29,16 +29,15 @@
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/drawable/map_marker.xml" value="0.1" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/drawable/scooter.xml" value="0.1" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/activity_photo.xml" value="0.12604166666666666" />
-        <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/activity_qr.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/activity_scan.xml" value="0.1" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/activity_scooter_sharing.xml" value="0.184375" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/activity_start_ride.xml" value="0.184375" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/dialog_add_data.xml" value="0.1375800980022616" />
+        <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/dialog_change_displayname.xml" value="0.17135416666666667" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_another_camera.xml" value="0.1" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_camera.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_edit_ride.xml" value="0.184375" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_maps.xml" value="0.17552083333333332" />
-        <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_qr.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_scooter_sharing.xml" value="0.184375" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/fragment_user_view.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/caspe/Documents/Skole/Semester_4/MAD/ScooterSharing/Test/app/src/main/res/layout/list_rides.xml" value="0.184375" />

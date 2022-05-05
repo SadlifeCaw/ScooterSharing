@@ -134,11 +134,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
                     val scooter = Scooter(id, lat, lon, battery, timestamp, model)
                     scooter.where = where
 
-                   /* val uid = database.child("scooters")
-                        .child(auth.currentUser?.uid!!)
-                        .push()
-                        .key*/
-
                     database.child("scooters")
                         .child(scooter.id!!)
                         .setValue(scooter)

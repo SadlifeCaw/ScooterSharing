@@ -96,4 +96,13 @@ class MainActivityVM : ViewModel() {
         this.location.value = location
     }
 
+    val displayname = MutableLiveData<String>()
+
+    fun getDisplayname(): String? = displayname.value
+
+    fun onDisplaynameChanged(name: String){
+        this.displayname.value = name
+    }
+
+
 }

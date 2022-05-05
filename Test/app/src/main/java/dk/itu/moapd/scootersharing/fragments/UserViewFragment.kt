@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +34,7 @@ import dk.itu.moapd.scootersharing.databinding.FragmentUserViewBinding
 import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.models.User
+import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import kotlinx.android.synthetic.main.fragment_user_view.*
 import java.math.RoundingMode
@@ -47,6 +51,7 @@ class UserViewFragment : Fragment() {
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
 
     private lateinit var user: String
+    private lateinit var viewModel: MainActivityVM
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +66,9 @@ class UserViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
+        viewModel = ViewModelProvider(context as ScooterSharingActivity).get(MainActivityVM::class.java)
+        val nameOpserver = Observer<String> {newName -> user_displayname.text = newName}
+        viewModel.displayname.observe(viewLifecycleOwner, nameOpserver)
         getUser(user)
     }
 
@@ -74,7 +82,7 @@ class UserViewFragment : Fragment() {
             val currentUser = it.getValue<User>()
             with(binding){
                 user_email.text = currentUser?.email
-                user_displayname.text = currentUser?.displayname
+                userDisplayname.text = currentUser?.displayname
                 if (currentUser?.debt!! > 0.0){
                     user_debt.text = "You currently owe our company $" + currentUser.debt.toString()
                 }
@@ -137,15 +145,9 @@ class UserViewFragment : Fragment() {
                 if (newName.isNotEmpty()) {
                     database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)")).child("displayname").setValue(newName)
                 }
+                viewModel.onDisplaynameChanged(newName)
+                Log.d("Casper", viewModel.getDisplayname()!!)
                 dialog.dismiss()
-                /*
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .hide(this)
-                    .show(UserViewFragment())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit()
-                 */
             }
             .setNegativeButton(getString(R.string.cancel_button)) { dialog, _ ->
                 dialog.dismiss()
