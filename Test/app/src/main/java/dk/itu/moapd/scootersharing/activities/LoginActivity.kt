@@ -40,9 +40,9 @@ class LoginActivity : AppCompatActivity() {
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         if (result.resultCode == RESULT_OK) {
             toast("User logged in to the app.")
+            startMainActivity()
         } else
             toast("Authentication failed.")
-        startMainActivity()
     }
 
     private fun startMainActivity() {
