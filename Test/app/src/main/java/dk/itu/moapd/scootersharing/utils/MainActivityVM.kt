@@ -17,6 +17,13 @@ class MainActivityVM : ViewModel() {
      */
     private val fragments = ArrayList<Fragment>()
 
+    private val fragmentScooterAdapter = HashMap<String, Fragment>()
+
+    fun addAdapterFragment(id: String, fragment: Fragment){
+        fragmentScooterAdapter.put(id, fragment)
+    }
+
+
     /**
      * This method will be executed when the main activity adds a new fragment into the user
      * interface.
@@ -33,6 +40,8 @@ class MainActivityVM : ViewModel() {
      * @return A list of all available fragments.
      */
     fun getFragmentList() : List<Fragment> = fragments
+
+    fun getFragmentAdapterList(): List<Fragment> = fragmentScooterAdapter.values.toList()
 
     /**
      * The current selected fragment to show in the user interface.
@@ -53,6 +62,10 @@ class MainActivityVM : ViewModel() {
      */
     fun setFragment(index: Int) {
         fragment.value = fragments.elementAt(index)
+    }
+
+    fun setAdapterFragment(id: String){
+        fragment.value = fragmentScooterAdapter.getValue(id)
     }
 
     /**

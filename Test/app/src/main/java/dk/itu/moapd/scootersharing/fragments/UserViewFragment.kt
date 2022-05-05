@@ -98,14 +98,8 @@ class UserViewFragment : Fragment() {
                     }
                 } else {
                     payButton.setOnClickListener{
-                        val fragment = PayFragment()
-                        val fragmentManager: FragmentManager =
-                            requireActivity().supportFragmentManager
-                        val fragmentTransaction: FragmentTransaction =
-                            fragmentManager.beginTransaction()
-                        fragmentTransaction.replace(R.id.fragment_container, fragment)
-                        fragmentTransaction.addToBackStack(null)
-                        fragmentTransaction.commit()
+                        viewModel.setAdapterFragment("CPH001")
+                        //viewModel.setFragment(5)
                     }
                 }
 
@@ -125,26 +119,16 @@ class UserViewFragment : Fragment() {
                         database.child("scooters").child(currentUser.rentedScooterID!!).child("timestamp").setValue(System.currentTimeMillis())
                         database.child("users").child(userEmail).child("rentedScooterID").setValue("")
 
-                        Handler(Looper.getMainLooper()).postDelayed(
-                            {
-                                val fragment = UserViewFragment()
-                                val fragmentManager: FragmentManager =
-                                    requireActivity().supportFragmentManager
-                                val fragmentTransaction: FragmentTransaction =
-                                    fragmentManager.beginTransaction()
-                                fragmentTransaction.replace(R.id.fragment_container, fragment)
-                                fragmentTransaction.addToBackStack(null)
-                                fragmentTransaction.commit()
-                            },
-                            1000
-                        )
+                        viewModel.setFragment(2)
                     }
                 } else {
                     stopRentingButton.text = getString(R.string.rent_new_scooter_button)
                     user_bikerental.text = getString(R.string.not_renting_scooter)
                     stopRentingButton.setOnClickListener{
-                        val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
-                        startActivity(intent)
+                        //val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
+                        //startActivity(intent)
+                        //viewModel.setFragment(0)
+                        viewModel.setAdapterFragment("CPH001")
                     }
                 }
                 changeDisplaynameButton.setOnClickListener{

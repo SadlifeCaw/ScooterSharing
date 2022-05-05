@@ -6,11 +6,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +21,10 @@ import com.enozom.poc.e_invoice.ZATCAScannerActivity
 import com.enozom.poc.e_invoice.utils.ZATCAQRCode
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
@@ -72,35 +78,61 @@ class ScooterSharingActivity : AppCompatActivity () {
 
         startLocationAware()
         if (lastFragment == null) {
-            viewModel.addFragment(ScooterSharingFragment())
-            viewModel.addFragment(MapsFragment())
-            viewModel.addFragment(CameraFragment())
-            viewModel.addFragment(UserViewFragment())
-            viewModel.addFragment(QrFragment())
+            viewModel.addFragment(ScooterSharingFragment()) // 0
+            viewModel.addFragment(MapsFragment()) // 1
+            viewModel.addFragment(CameraFragment()) // 2
+            viewModel.addFragment(UserViewFragment()) // 3
+            viewModel.addFragment(QrFragment()) // 4
+            viewModel.addFragment(PayFragment()) // 5
             viewModel.setFragment(0)
         }
 
-        // Add the fragment into the activity.
-        for (fragment in viewModel.getFragmentList())
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .hide(fragment)
-                .commit()
+        database.child("scooters").addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach{
+                    val args = Bundle()
+                    args.putString("scooterid", it.child("id").getValue(String::class.java))
+                    val fragment = ScooterViewFragment()
+                    fragment.arguments = args
+                    Log.d("Casper", it.child("id").getValue(String::class.java)!!)
+                    Log.d("Casper - fragment", fragment.toString())
+                    viewModel.addAdapterFragment(it.child("id").getValue(String::class.java)!!, fragment)
+                    Log.d("Casper - LIST", viewModel.getFragmentAdapterList().size.toString())
+                }
+                Log.d("Casper - LIST after 4each", viewModel.getFragmentAdapterList().size.toString())
+            }
+            override fun onCancelled(error: DatabaseError) {
+                val toast = Toast.makeText(this@ScooterSharingActivity, "Failed to connect to database", Toast.LENGTH_SHORT)
+                toast.show()
+            }
+        })
 
-        // The current activity.
-        var activeFragment: Fragment = viewModel.fragmentState.value!!
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                // Add the fragment into the activity.
+                for (fragment in viewModel.getFragmentList().union(viewModel.getFragmentAdapterList()))
+                    supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.fragment_container, fragment)
+                        .hide(fragment)
+                        .commit()
 
-        // Execute this when the user sets a specific fragment.
-        viewModel.fragmentState.observe(this) { fragment ->
-            supportFragmentManager
-                .beginTransaction()
-                .hide(activeFragment)
-                .show(fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit()
-            activeFragment = fragment
-        }
+                // The current activity.
+                var activeFragment: Fragment = viewModel.fragmentState.value!!
+
+                // Execute this when the user sets a specific fragment.
+                viewModel.fragmentState.observe(this) { fragment ->
+                    supportFragmentManager
+                        .beginTransaction()
+                        .hide(activeFragment)
+                        .show(fragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .commit()
+                    activeFragment = fragment
+                }
+            },
+            1000
+        )
 
 
         with (binding) {
@@ -160,11 +192,13 @@ class ScooterSharingActivity : AppCompatActivity () {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser == null)
+        if (auth.currentUser == null){
             startLoginActivity()
+        }
     }
 
     override fun onResume() {
+        Log.d("Casper - LIST", viewModel.getFragmentAdapterList().size.toString())
         super.onResume()
         subscribeToLocationUpdates()
     }

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -27,10 +28,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.models.Smodel
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
 import dk.itu.moapd.scootersharing.utils.DATABASE_URL
+import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.io.IOException
 import java.util.*
 import kotlin.random.Random
@@ -43,6 +46,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     private lateinit var customAlertDialogView: View
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
     private lateinit var storage: FirebaseStorage
+    private lateinit var viewModel: MainActivityVM
 
     companion object {
         private lateinit var adapter : RidesListXX
@@ -66,6 +70,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         database = Firebase.database(DATABASE_URL).reference
         storage = Firebase.storage(BUCKET_URL)
         database.keepSynced(true)
+        viewModel = ViewModelProvider(context as ScooterSharingActivity).get(MainActivityVM::class.java)
 
         val query = database.child("scooters").orderByChild("available").equalTo(true)
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()
@@ -76,17 +81,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         with (binding) {
             adapter = RidesListXX(options)
             adapter.onItemClick = { scooter ->
-                val args = Bundle()
-                args.putString("scooterid", scooter.id)
-                val fragment = ScooterViewFragment()
-                fragment.arguments = args
-                val fragmentManager: FragmentManager =
-                    requireActivity().supportFragmentManager
-                val fragmentTransaction: FragmentTransaction =
-                    fragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.fragment_container, fragment)
-                fragmentTransaction.addToBackStack(null)
-                fragmentTransaction.commit()
+                viewModel.setAdapterFragment(scooter.id!!.toString())
             }
             listOfRides.layoutManager = LinearLayoutManager(context)
             listOfRides.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
