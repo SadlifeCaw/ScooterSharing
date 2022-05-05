@@ -67,6 +67,7 @@ class ScooterSharingActivity : AppCompatActivity () {
             viewModel.addFragment(MapsFragment())
             viewModel.addFragment(CameraFragment())
             viewModel.addFragment(UserViewFragment())
+            //viewModel.addFragment(QrFragment())
             viewModel.setFragment(0)
         }
 

@@ -138,13 +138,14 @@ class UserViewFragment : Fragment() {
                     database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)")).child("displayname").setValue(newName)
                 }
                 dialog.dismiss()
-
+                /*
                 requireActivity().supportFragmentManager
                     .beginTransaction()
                     .hide(this)
                     .show(UserViewFragment())
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit()
+                 */
             }
             .setNegativeButton(getString(R.string.cancel_button)) { dialog, _ ->
                 dialog.dismiss()
