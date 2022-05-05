@@ -14,6 +14,7 @@
     <string name="back_button">Back</string>
     <string name="list_rides_button">List Rides</string>
     <string name="reserve_button">Reserve</string>
+    <string name="rent_button">Rent</string>
     <string name="more_info_button">More Info</string>
     <string name="yes_button">Yes</string>
     <string name="no_button">No</string>

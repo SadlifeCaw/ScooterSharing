@@ -72,6 +72,16 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         database.keepSynced(true)
         viewModel = ViewModelProvider(context as ScooterSharingActivity).get(MainActivityVM::class.java)
 
+        val userEmail = auth.currentUser?.email!!.replace(".", "(dot)")
+        val userquery = ScooterSharingActivity.database.child("users").child(userEmail)
+        userquery.get().addOnSuccessListener{
+            val currentUser = it.getValue<User>()
+            if (currentUser?.email == null){
+                val user = User(auth.currentUser?.email!!, auth.currentUser?.email!!, "", 0.0)
+                ScooterSharingActivity.database.child("users").child(userEmail).setValue(user)
+            }
+        }
+
         val query = database.child("scooters").orderByChild("available").equalTo(true)
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()
         materialAlertDialogBuilder = MaterialAlertDialogBuilder(context)

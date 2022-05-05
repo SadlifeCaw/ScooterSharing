@@ -44,12 +44,12 @@
         android:text="@string/scooterbatterylevel" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/reserve_button"
+        android:id="@+id/rent_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:text="@string/reserve_button"
+        android:text="@string/rent_button"
         app:srcCompat="@drawable/ic_baseline_add_24" />
 
 </LinearLayout>

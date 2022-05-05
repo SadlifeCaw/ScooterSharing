@@ -93,7 +93,7 @@ class ScooterViewFragment : Fragment() {
                 scooterlocation.text = scooter?.where
                 scootertime.text = scooter?.timestamp!!.toDateString()
                 scooterbatterylevel.text = scooter.battery.toString()
-                reserveButton.setOnClickListener{
+                rentButton.setOnClickListener{
                     val userEmail = auth.currentUser?.email!!.replace(".", "(dot)")
                     val userquery = database.child("users").child(userEmail)
                     userquery.get().addOnSuccessListener {
