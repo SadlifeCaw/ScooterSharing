@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.models.Smodel
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.BUCKET_URL
@@ -66,6 +67,16 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
         database = Firebase.database(DATABASE_URL).reference
         storage = Firebase.storage(BUCKET_URL)
         database.keepSynced(true)
+
+        val userEmail = auth.currentUser?.email!!.replace(".", "(dot)")
+        val userquery = ScooterSharingActivity.database.child("users").child(userEmail)
+        userquery.get().addOnSuccessListener{
+            val currentUser = it.getValue<User>()
+            if (currentUser?.email == null){
+                val user = User(auth.currentUser?.email!!, auth.currentUser?.email!!, "", 0.0)
+                ScooterSharingActivity.database.child("users").child(userEmail).setValue(user)
+            }
+        }
 
         val query = database.child("scooters").orderByChild("available").equalTo(true)
         val options = FirebaseRecyclerOptions.Builder<Scooter>().setQuery(query, Scooter::class.java).setLifecycleOwner(this).build()

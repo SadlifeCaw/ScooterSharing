@@ -48,17 +48,9 @@ class ScooterSharingActivity : AppCompatActivity () {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         binding = ActivityScooterSharingBinding.inflate(layoutInflater)
+
         database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
-        val userEmail = auth.currentUser?.email!!.replace(".", "(dot)")
-        val query = database.child("users").child(userEmail)
-        query.get().addOnSuccessListener{
-            val currentUser = it.getValue<User>()
-            if (currentUser?.email == null){
-                val user = User(auth.currentUser?.email!!, auth.currentUser?.email!!, "", 0.0)
-                database.child("users").child(userEmail).setValue(user)
-            }
-        }
 
         defineModels()
 
@@ -97,7 +89,7 @@ class ScooterSharingActivity : AppCompatActivity () {
 
 
         with (binding) {
-            bottomNavigation?.selectedItemId = viewModel.getButtonId()
+            bottomNavigation.selectedItemId = viewModel.getButtonId()
 
             topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -152,9 +144,10 @@ class ScooterSharingActivity : AppCompatActivity () {
     }
 
     override fun onStart() {
-        super.onStart()
-        if (auth.currentUser == null)
+        if (auth.currentUser == null) {
             startLoginActivity()
+        }
+        super.onStart()
     }
 
     override fun onResume() {
