@@ -94,10 +94,7 @@ class ScooterSharingActivity : AppCompatActivity () {
                     args.putString("scooterid", it.child("id").getValue(String::class.java))
                     val fragment = ScooterViewFragment()
                     fragment.arguments = args
-                    Log.d("Casper", it.child("id").getValue(String::class.java)!!)
-                    Log.d("Casper - fragment", fragment.toString())
                     viewModel.addAdapterFragment(it.child("id").getValue(String::class.java)!!, fragment)
-                    Log.d("Casper - LIST", viewModel.getFragmentAdapterList().size.toString())
                 }
                 Log.d("Casper - LIST after 4each", viewModel.getFragmentAdapterList().size.toString())
             }
@@ -131,7 +128,7 @@ class ScooterSharingActivity : AppCompatActivity () {
                     activeFragment = fragment
                 }
             },
-            1000
+            800
         )
 
 

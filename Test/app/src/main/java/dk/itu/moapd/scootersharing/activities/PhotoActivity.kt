@@ -1,8 +1,10 @@
 package dk.itu.moapd.scootersharing.activities
 
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.ContentProviderCompat.requireContext
 import dk.itu.moapd.scootersharing.databinding.ActivityPhotoBinding
 
 class PhotoActivity : AppCompatActivity() {
@@ -18,7 +20,8 @@ class PhotoActivity : AppCompatActivity() {
 
         // Set up the listener for back button.
         binding.backButton.setOnClickListener {
-            finish()
+            val intent = Intent(this, ScooterSharingActivity::class.java)
+            startActivity(intent)
         }
 
         // Showing the last taken image.

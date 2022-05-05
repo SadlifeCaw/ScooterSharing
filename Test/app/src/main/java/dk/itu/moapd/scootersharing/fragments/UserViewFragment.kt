@@ -98,8 +98,7 @@ class UserViewFragment : Fragment() {
                     }
                 } else {
                     payButton.setOnClickListener{
-                        viewModel.setAdapterFragment("CPH001")
-                        //viewModel.setFragment(5)
+                        viewModel.setFragment(5)
                     }
                 }
 
@@ -113,12 +112,11 @@ class UserViewFragment : Fragment() {
                             val currentScooter = it.getValue<Scooter>()
                             val df = DecimalFormat("#.##")
                             df.roundingMode = RoundingMode.DOWN
-                            val changeInDebt = df.format(((System.currentTimeMillis() - currentScooter?.timestamp!!)/300000.toDouble()) + 5).toDouble()
+                            val changeInDebt = df.format(((System.currentTimeMillis() - currentScooter?.timestamp!!)/300000.toDouble()) + 5).replace(",",".").toDouble()
                             database.child("users").child(userEmail).child("debt").setValue(currentUser.debt!! + changeInDebt)
                         }
                         database.child("scooters").child(currentUser.rentedScooterID!!).child("timestamp").setValue(System.currentTimeMillis())
                         database.child("users").child(userEmail).child("rentedScooterID").setValue("")
-
                         viewModel.setFragment(2)
                     }
                 } else {
@@ -128,7 +126,8 @@ class UserViewFragment : Fragment() {
                         //val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
                         //startActivity(intent)
                         //viewModel.setFragment(0)
-                        viewModel.setAdapterFragment("CPH001")
+                        val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
+                        startActivity(intent)
                     }
                 }
                 changeDisplaynameButton.setOnClickListener{

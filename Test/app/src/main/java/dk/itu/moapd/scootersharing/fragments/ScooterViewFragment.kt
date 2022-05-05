@@ -1,16 +1,24 @@
 package dk.itu.moapd.scootersharing.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.enozom.poc.e_invoice.ZATCAScannerActivity
+import com.enozom.poc.e_invoice.utils.ZATCAQRCode
 import com.google.firebase.auth.FirebaseAuth
 import dk.itu.moapd.scootersharing.R
 import com.google.firebase.database.*
@@ -34,6 +42,10 @@ class ScooterViewFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
 
     private lateinit var scooterid: String
+    private lateinit var viewModel: MainActivityVM
+    private lateinit var activityLauncher: ActivityResultLauncher<Intent>
+    private var qrCodeMatchID: Boolean = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,11 +54,27 @@ class ScooterViewFragment : Fragment() {
         _binding = FragmentScooterViewBinding.inflate(inflater, container, false)
         auth = FirebaseAuth.getInstance()
         scooterid = arguments?.getString("scooterid", "CPH001")!!
+        viewModel = ViewModelProvider(context as ScooterSharingActivity).get(MainActivityVM::class.java)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val scannedQRCode = result.data?.getSerializableExtra(
+                        ZATCAScannerActivity.ZATCA_BILL_INFO) as? ZATCAQRCode
+
+                    if(result.resultCode == Activity.RESULT_OK){
+                        database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)")).child("rentedScooterID").setValue(scooterid)
+                        database.child("scooters").child(scooterid).child("available").setValue(false)
+                        database.child("scooters").child(scooterid).child("timestamp").setValue(System.currentTimeMillis())
+                        val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
         getScooter(scooterid)
     }
 
@@ -71,11 +99,7 @@ class ScooterViewFragment : Fragment() {
                     userquery.get().addOnSuccessListener {
                         val currentUser = it.getValue<User>()
                         if (currentUser?.rentedScooterID == ""){
-                            database.child("users").child(userEmail).child("rentedScooterID").setValue(scooterid)
-                            database.child("scooters").child(scooterid).child("available").setValue(false)
-                            database.child("scooters").child(scooterid).child("timestamp").setValue(System.currentTimeMillis())
-                            val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
-                            startActivity(intent)
+                            activityLauncher.launch(ZATCAScannerActivity.newIntent(requireActivity()))
                         } else {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Already renting a scooter")
@@ -90,7 +114,7 @@ class ScooterViewFragment : Fragment() {
                                             val oldScooter = it.getValue<Scooter>()
                                             val df = DecimalFormat("#.##")
                                             df.roundingMode = RoundingMode.DOWN
-                                            val changeInDebt = df.format(((System.currentTimeMillis() - oldScooter?.timestamp!!)/300000.toDouble()) + 5).toDouble()
+                                            val changeInDebt = df.format(((System.currentTimeMillis() - oldScooter?.timestamp!!)/300000.toDouble()) + 5).replace(",",".").toDouble()
                                             database.child("users").child(userEmail).child("debt").setValue(currentUser.debt!! + changeInDebt)
                                         }
 
