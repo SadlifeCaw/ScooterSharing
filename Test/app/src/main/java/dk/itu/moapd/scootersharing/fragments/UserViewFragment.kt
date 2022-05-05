@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +33,9 @@ import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.models.User
 import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import kotlinx.android.synthetic.main.fragment_user_view.*
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import kotlin.math.roundToInt
 
 
 class UserViewFragment : Fragment() {
@@ -70,21 +75,39 @@ class UserViewFragment : Fragment() {
             with(binding){
                 user_email.text = currentUser?.email
                 user_displayname.text = currentUser?.displayname
-                if (currentUser?.rentedScooterID != "") {
+                if (currentUser?.debt!! > 0.0){
+                    user_debt.text = "You currently owe our company $" + currentUser.debt.toString()
+                }
+
+                if (currentUser.rentedScooterID != "") {
                     stopRentingButton.text = getString(R.string.stop_renting_button)
-                    user_bikerental.text = "You are currently renting scooter ${currentUser?.rentedScooterID}. In case you want to stop renting it, you can click the button below."
+                    user_bikerental.text = "You are currently renting scooter ${currentUser.rentedScooterID}. In case you want to stop renting it, you can click the button below."
                     stopRentingButton.setOnClickListener{
-                        database.child("scooters").child(currentUser?.rentedScooterID!!).child("available").setValue(true)
+                        database.child("scooters").child(currentUser.rentedScooterID!!).child("available").setValue(true)
+                        val scooterQuery = database.child("scooters").child(currentUser.rentedScooterID!!)
+                        scooterQuery.get().addOnSuccessListener {
+                            val currentScooter = it.getValue<Scooter>()
+                            val df = DecimalFormat("#.##")
+                            df.roundingMode = RoundingMode.DOWN
+                            val changeInDebt = df.format(((System.currentTimeMillis() - currentScooter?.timestamp!!)/300000.toDouble()) + 5).toDouble()
+                            database.child("users").child(userEmail).child("debt").setValue(currentUser.debt!! + changeInDebt)
+                        }
+                        database.child("scooters").child(currentUser.rentedScooterID!!).child("timestamp").setValue(System.currentTimeMillis())
                         database.child("users").child(userEmail).child("rentedScooterID").setValue("")
 
-                        val fragment = UserViewFragment()
-                        val fragmentManager: FragmentManager =
-                            requireActivity().supportFragmentManager
-                        val fragmentTransaction: FragmentTransaction =
-                            fragmentManager.beginTransaction()
-                        fragmentTransaction.replace(R.id.fragment_container, fragment)
-                        fragmentTransaction.addToBackStack(null)
-                        fragmentTransaction.commit()
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            {
+                                val fragment = UserViewFragment()
+                                val fragmentManager: FragmentManager =
+                                    requireActivity().supportFragmentManager
+                                val fragmentTransaction: FragmentTransaction =
+                                    fragmentManager.beginTransaction()
+                                fragmentTransaction.replace(R.id.fragment_container, fragment)
+                                fragmentTransaction.addToBackStack(null)
+                                fragmentTransaction.commit()
+                            },
+                            1000
+                        )
                     }
                 } else {
                     stopRentingButton.text = getString(R.string.rent_new_scooter_button)

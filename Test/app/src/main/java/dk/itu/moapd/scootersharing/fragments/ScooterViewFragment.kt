@@ -21,6 +21,8 @@ import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentScooterViewBinding
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.models.User
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 
 class ScooterViewFragment : Fragment() {
@@ -67,6 +69,7 @@ class ScooterViewFragment : Fragment() {
                         if (currentUser?.rentedScooterID == ""){
                             database.child("users").child(userEmail).child("rentedScooterID").setValue(scooterid)
                             database.child("scooters").child(scooterid).child("available").setValue(false)
+                            database.child("scooters").child(scooterid).child("timestamp").setValue(System.currentTimeMillis())
                             val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
                             startActivity(intent)
                         } else {
@@ -77,8 +80,19 @@ class ScooterViewFragment : Fragment() {
                                     getString(R.string.yes_button),
                                     DialogInterface.OnClickListener { dialog, which ->
                                         database.child("scooters").child(currentUser?.rentedScooterID!!).child("available").setValue(true)
+
+                                        val oldScooterQuery = database.child("scooters").child(currentUser.rentedScooterID!!)
+                                        oldScooterQuery.get().addOnSuccessListener {
+                                            val oldScooter = it.getValue<Scooter>()
+                                            val df = DecimalFormat("#.##")
+                                            df.roundingMode = RoundingMode.DOWN
+                                            val changeInDebt = df.format(((System.currentTimeMillis() - oldScooter?.timestamp!!)/300000.toDouble()) + 5).toDouble()
+                                            database.child("users").child(userEmail).child("debt").setValue(currentUser.debt!! + changeInDebt)
+                                        }
+
                                         database.child("users").child(userEmail).child("rentedScooterID").setValue(scooterid)
                                         database.child("scooters").child(scooterid).child("available").setValue(false)
+                                        database.child("scooters").child(scooterid).child("timestamp").setValue(System.currentTimeMillis())
                                         val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
                                         startActivity(intent)
                                     })

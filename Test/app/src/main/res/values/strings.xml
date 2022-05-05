@@ -58,6 +58,7 @@
     <string name="stop_renting_button">Stop Renting</string>
     <string name="user_email">Email</string>
     <string name="user_bikerental">Rental Info</string>
+    <string name="user_debt">You currently do not owe any money to us!</string>
 
     <string name="content_description_add">Add Description</string>
     <string name="switch_camera">Switch camera</string>
