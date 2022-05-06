@@ -43,7 +43,7 @@ class ScooterSharingActivity : AppCompatActivity () {
         lateinit var database : DatabaseReference
     }
 
-    private val viewModel: MainActivityVM by lazy {
+    val viewModel: MainActivityVM by lazy {
         ViewModelProvider(this)
             .get(MainActivityVM::class.java)
     }
