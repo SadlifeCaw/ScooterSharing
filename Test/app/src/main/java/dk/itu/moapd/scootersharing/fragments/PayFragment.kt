@@ -50,7 +50,7 @@ class PayFragment : Fragment() {
         query.get().addOnSuccessListener {
             val currentUser = it.getValue<User>()
             with(binding){
-                user_displayname.text = "Hello " + currentUser?.displayname
+                user_displayname.setText("Hello " + currentUser?.displayname)
                 user_debt.text = "You currently owe our company $" + currentUser?.debt.toString() + ". Pay now with MobilePay by clicking the button below."
                 mobilepayButton.setOnClickListener{
                     database.child("users").child(userEmail).child("debt").setValue(0)
