@@ -15,7 +15,6 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.common.util.concurrent.ListenableFuture
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.activities.PhotoActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentCameraBinding

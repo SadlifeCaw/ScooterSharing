@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.content.ContentProviderCompat.requireContext
 import dk.itu.moapd.scootersharing.databinding.ActivityPhotoBinding
 
 class PhotoActivity : AppCompatActivity() {
