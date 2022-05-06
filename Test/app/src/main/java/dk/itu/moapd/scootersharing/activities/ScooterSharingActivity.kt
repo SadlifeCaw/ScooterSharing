@@ -1,7 +1,6 @@
 package dk.itu.moapd.scootersharing.activities
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -10,15 +9,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import com.enozom.poc.e_invoice.ZATCAScannerActivity
-import com.enozom.poc.e_invoice.utils.ZATCAQRCode
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -26,13 +20,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
 import dk.itu.moapd.scootersharing.databinding.ActivityScooterSharingBinding
 import dk.itu.moapd.scootersharing.fragments.*
 import dk.itu.moapd.scootersharing.models.Smodel
-import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.util.concurrent.TimeUnit
 
@@ -74,8 +66,7 @@ class ScooterSharingActivity : AppCompatActivity () {
             viewModel.addFragment(MapsFragment()) // 1
             viewModel.addFragment(CameraFragment()) // 2
             viewModel.addFragment(UserViewFragment()) // 3
-            viewModel.addFragment(QrFragment()) // 4
-            viewModel.addFragment(PayFragment()) // 5
+            viewModel.addFragment(PayFragment()) // 4
             viewModel.setFragment(0)
         }
 
@@ -120,7 +111,7 @@ class ScooterSharingActivity : AppCompatActivity () {
                     activeFragment = fragment
                 }
             },
-            800
+            1000
         )
 
 
@@ -159,13 +150,6 @@ class ScooterSharingActivity : AppCompatActivity () {
                         true
                     }
 
-                    // Select the Fragment 3 bottom.
-                    R.id.page_3 -> {
-                        viewModel.setFragment(4)
-                        viewModel.setButtonId(R.id.page_3)
-                        true
-                    }
-
                     else -> false
                 }
             }
@@ -187,7 +171,6 @@ class ScooterSharingActivity : AppCompatActivity () {
     }
 
     override fun onResume() {
-        Log.d("Casper - LIST", viewModel.getFragmentAdapterList().size.toString())
         super.onResume()
         subscribeToLocationUpdates()
     }

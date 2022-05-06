@@ -6,8 +6,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,7 +48,7 @@ class ScooterViewFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentScooterViewBinding.inflate(inflater, container, false)
         auth = FirebaseAuth.getInstance()
         scooterid = arguments?.getString("scooterid", "CPH001")!!
@@ -67,6 +65,8 @@ class ScooterViewFragment : Fragment() {
                         ZATCAScannerActivity.ZATCA_BILL_INFO) as? ZATCAQRCode
 
                     if(result.resultCode == Activity.RESULT_OK){
+                        val toast = Toast.makeText(requireContext(), "QR-code accepted!", Toast.LENGTH_LONG)
+                        toast.show()
                         database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)")).child("rentedScooterID").setValue(scooterid)
                         database.child("scooters").child(scooterid).child("available").setValue(false)
                         database.child("scooters").child(scooterid).child("timestamp").setValue(System.currentTimeMillis())
@@ -117,12 +117,7 @@ class ScooterViewFragment : Fragment() {
                                             val changeInDebt = df.format(((System.currentTimeMillis() - oldScooter?.timestamp!!)/300000.toDouble()) + 5).replace(",",".").toDouble()
                                             database.child("users").child(userEmail).child("debt").setValue(currentUser.debt!! + changeInDebt)
                                         }
-
-                                        database.child("users").child(userEmail).child("rentedScooterID").setValue(scooterid)
-                                        database.child("scooters").child(scooterid).child("available").setValue(false)
-                                        database.child("scooters").child(scooterid).child("timestamp").setValue(System.currentTimeMillis())
-                                        val intent = Intent(requireContext(), ScooterSharingActivity::class.java)
-                                        startActivity(intent)
+                                        activityLauncher.launch(ZATCAScannerActivity.newIntent(requireActivity()))
                                     })
                                 .setNegativeButton(getString(R.string.no_button),
                                     DialogInterface.OnClickListener { dialog, which -> })

@@ -98,7 +98,7 @@ class UserViewFragment : Fragment() {
                     }
                 } else {
                     payButton.setOnClickListener{
-                        viewModel.setFragment(5)
+                        viewModel.setFragment(4)
                     }
                 }
 

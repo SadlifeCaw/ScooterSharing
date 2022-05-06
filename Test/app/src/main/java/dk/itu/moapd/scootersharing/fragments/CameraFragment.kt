@@ -189,7 +189,7 @@ class CameraFragment : Fragment() {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     imageUri = Uri.fromFile(photoFile)
-                    val msg = "Photo capture succeeded: $imageUri"
+                    val msg = "Photo taken! Please select it from the album."
                     toast(msg)
                     Log.d("OnImageSaved", msg)
                 }
@@ -208,7 +208,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun toast(text: CharSequence,
-                      duration: Int = Toast.LENGTH_SHORT) {
+                      duration: Int = Toast.LENGTH_LONG) {
         Toast.makeText(requireContext(), text, duration).show()
     }
 

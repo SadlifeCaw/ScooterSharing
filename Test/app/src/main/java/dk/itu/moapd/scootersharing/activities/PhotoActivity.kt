@@ -19,7 +19,7 @@ class PhotoActivity : AppCompatActivity() {
         binding = ActivityPhotoBinding.inflate(layoutInflater)
 
         // Set up the listener for back button.
-        binding.backButton.setOnClickListener {
+        binding.sendPictureButton.setOnClickListener {
             val intent = Intent(this, ScooterSharingActivity::class.java)
             startActivity(intent)
         }
