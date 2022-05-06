@@ -22,3 +22,13 @@ class ExampleInstrumentedTest {
         assertEquals("dk.itu.moapd.recyclerview", appContext.packageName)
     }
 }
+
+@RunWith(AndroidJUnit4::class)
+class SelectSingleScooter {
+    @Test
+    fun useAppContext() {
+        // Context of the app under test.
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        assertEquals("dk.itu.moapd.recyclerview", appContext.packageName)
+    }
+}
