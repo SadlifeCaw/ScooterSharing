@@ -16,7 +16,6 @@ import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.databinding.FragmentPayBinding
 import dk.itu.moapd.scootersharing.models.User
-import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import kotlinx.android.synthetic.main.fragment_user_view.*
 
 class PayFragment : Fragment() {

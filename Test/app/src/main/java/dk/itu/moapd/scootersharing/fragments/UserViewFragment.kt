@@ -1,21 +1,14 @@
 package dk.itu.moapd.scootersharing.fragments
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -26,21 +19,14 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import dk.itu.moapd.scootersharing.R
-import dk.itu.moapd.scootersharing.activities.LoginActivity
-import dk.itu.moapd.scootersharing.activities.PhotoActivity
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
-import dk.itu.moapd.scootersharing.databinding.FragmentScooterViewBinding
 import dk.itu.moapd.scootersharing.databinding.FragmentUserViewBinding
-import dk.itu.moapd.scootersharing.interfaces.ItemClickListener
 import dk.itu.moapd.scootersharing.models.Scooter
 import dk.itu.moapd.scootersharing.models.User
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
-import kotlinx.android.synthetic.main.activity_scooter_sharing.*
 import kotlinx.android.synthetic.main.fragment_user_view.*
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import kotlin.math.roundToInt
-
 
 class UserViewFragment : Fragment() {
     private var _binding: FragmentUserViewBinding? = null
@@ -98,7 +84,7 @@ class UserViewFragment : Fragment() {
                     }
                 } else {
                     payButton.setOnClickListener{
-                        viewModel.setFragment(5)
+                        viewModel.setFragment(4)
                     }
                 }
 

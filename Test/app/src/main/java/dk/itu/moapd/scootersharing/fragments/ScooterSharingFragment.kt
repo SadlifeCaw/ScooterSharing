@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -27,12 +25,9 @@ import dk.itu.moapd.scootersharing.models.Scooter
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 import dk.itu.moapd.scootersharing.activities.ScooterSharingActivity
 import dk.itu.moapd.scootersharing.models.Smodel
 import dk.itu.moapd.scootersharing.models.User
-import dk.itu.moapd.scootersharing.utils.BUCKET_URL
-import dk.itu.moapd.scootersharing.utils.DATABASE_URL
 import dk.itu.moapd.scootersharing.utils.MainActivityVM
 import java.io.IOException
 import java.util.*
@@ -45,7 +40,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     private lateinit var database: DatabaseReference
     private lateinit var customAlertDialogView: View
     private lateinit var materialAlertDialogBuilder: MaterialAlertDialogBuilder
-    private lateinit var storage: FirebaseStorage
     private lateinit var viewModel: MainActivityVM
 
     companion object {
@@ -67,8 +61,7 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireContext()
         super.onViewCreated(view, savedInstanceState)
-        database = Firebase.database(DATABASE_URL).reference
-        storage = Firebase.storage(BUCKET_URL)
+        database = Firebase.database("https://scooter-sharing-2ac71-default-rtdb.europe-west1.firebasedatabase.app/").reference
         database.keepSynced(true)
         viewModel = ViewModelProvider(context as ScooterSharingActivity).get(MainActivityVM::class.java)
 
@@ -104,7 +97,6 @@ class ScooterSharingFragment : Fragment(), ItemClickListener{
             val userQuery = database.child("users").child(auth.currentUser?.email!!.replace(".", "(dot)"))
             userQuery.get().addOnSuccessListener {
                 val currentUser = it.getValue<User>()
-                description.text = "Hello " + currentUser?.displayname + "!"
             }
         }
     }

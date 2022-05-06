@@ -18,18 +18,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/back_button"
-            android:contentDescription="@string/back_button"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/send_picture_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_back" />
+            android:text="@string/send_picture_button"
+            app:srcCompat="@drawable/ic_baseline_add_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

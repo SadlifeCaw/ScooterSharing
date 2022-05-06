@@ -62,6 +62,8 @@
     <string name="user_bikerental">Rental Info</string>
     <string name="user_debt">You currently do not owe any money to us!</string>
 
+    <string name="send_picture_button">Send Picture</string>
+
     <string name="content_description_add">Add Description</string>
     <string name="switch_camera">Switch camera</string>
     <string name="capture_camera">Capture</string>
